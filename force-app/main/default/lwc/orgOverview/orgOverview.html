@@ -1,0 +1,39 @@
+<template>
+    <div class="custom-container">
+        
+        <div class="collapsible-content-container">
+            <div class={contentClass}>
+                    <ol>
+                        <li>Company Information</li>
+                        <li>Instance & Status from trust API's</li>
+                        <li>Something Org Metrics on trust API's</li>
+                        <li>If Release is With in 45 days, counter (kinda like release readiness resources)</li>
+                    </ol>
+            </div>
+        </div>
+
+        <div class="separator-bar" onclick={toggleContent}>
+            <lightning-button-icon 
+                icon-name={iconName} 
+                alternative-text={buttonLabel} 
+                title={buttonLabel}
+                variant="bare-inverse" 
+                class="chevron-button"
+                aria-expanded={isContentVisible}
+                aria-controls="main-content-area">
+            </lightning-button-icon>
+        </div>
+
+        <div class="main-content-box" id="main-content-area">
+            <h2 class="slds-text-heading_medium slds-var-m-bottom_small">
+                Org Summary (Always Visible)
+            </h2>
+            <ol>
+                <li>Limits</li>
+                <li>User Summary</li>
+                <li>Something Org Metrics on trust API's</li>
+                <li>If Release is With in 45 days, counter (kinda like release readiness resources)</li>
+            </ol>
+        </div>
+    </div>
+</template>

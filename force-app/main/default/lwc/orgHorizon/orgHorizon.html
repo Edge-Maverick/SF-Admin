@@ -1,0 +1,41 @@
+<template>
+    <div>
+        <lightning-layout multiple-rows=false>
+            <lightning-layout-item>
+                <div class="navigation-container">
+                <lightning-vertical-navigation selected-item={selectedItem} onselect={handleSelect} class="navigation">
+                    <lightning-vertical-navigation-section label="Hi, Lokanadh">
+                        <lightning-vertical-navigation-item label="Overview" name="org_overview"></lightning-vertical-navigation-item>
+                        <lightning-vertical-navigation-item label="Licence Utilization" name="licence_utilization"></lightning-vertical-navigation-item>
+                        <lightning-vertical-navigation-item label="User Adoption" name="user_adoption"></lightning-vertical-navigation-item>
+                        <lightning-vertical-navigation-item label="Login Forensics" name="login_forensics"></lightning-vertical-navigation-item>
+                        <lightning-vertical-navigation-item-badge label="Setup Audit" name="setup_audit" badge-count={updatedCount}></lightning-vertical-navigation-item-badge>
+                    </lightning-vertical-navigation-section>
+                    <lightning-vertical-navigation-overflow>
+                        <lightning-vertical-navigation-item label="Extra Report 1" name="reports_extra1"></lightning-vertical-navigation-item>
+                        <lightning-vertical-navigation-item label="Extra Report 2" name="reports_extra2"></lightning-vertical-navigation-item>
+                        <lightning-vertical-navigation-item label="Extra Report 3" name="reports_extra3"></lightning-vertical-navigation-item>
+                        <lightning-vertical-navigation-item label="Extra Report 4" name="reports_extra4"></lightning-vertical-navigation-item>
+                        <lightning-vertical-navigation-item label="Extra Report 5" name="reports_extra5"></lightning-vertical-navigation-item>
+                    </lightning-vertical-navigation-overflow>
+                    <lightning-vertical-navigation-overflow>
+                        <lightning-vertical-navigation-item label="Extra Folder 1" name="folders_extra1"></lightning-vertical-navigation-item>
+                        <lightning-vertical-navigation-item label="Extra Folder 2" name="folders_extra2"></lightning-vertical-navigation-item>
+                        <lightning-vertical-navigation-item label="Extra Folder 3" name="folders_extra3"></lightning-vertical-navigation-item>
+                    </lightning-vertical-navigation-overflow>
+                    <lightning-vertical-navigation-section label="Launch Pad">
+                        <lightning-vertical-navigation-item-icon label="Trust & Status" name="folders_shared" icon-name="utility:new_window"></lightning-vertical-navigation-item-icon>
+                        <lightning-vertical-navigation-item-icon label="Salesforce Go" name="folders_created" icon-name="utility:new_window"></lightning-vertical-navigation-item-icon>
+                        <lightning-vertical-navigation-item label="All Folders" name="folders_all"></lightning-vertical-navigation-item>
+                    </lightning-vertical-navigation-section>
+                </lightning-vertical-navigation>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item>
+                <div class="content-container">
+                    <c-org-overview></c-org-overview>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+</template>

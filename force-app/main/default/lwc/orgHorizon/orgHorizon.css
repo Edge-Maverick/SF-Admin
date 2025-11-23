@@ -1,0 +1,17 @@
+:host {
+    padding: 0 !important;
+    margin:0 !important;
+    background: transparent !important;
+}
+
+.navigation-container {
+    background-color: whitesmoke;
+    min-width:200px;
+    border-radius: 1rem;
+    border: 1px solid #625d5d;
+}
+
+.content-container{
+    margin-left: 0.5rem;
+    width: 100%;
+}

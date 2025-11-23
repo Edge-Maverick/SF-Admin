@@ -1,0 +1,77 @@
+/* Container for the entire component */
+.custom-container {
+    position: relative;
+     /* Curved Border */
+    border-radius: 0.5rem; /* Round the corners */
+}
+
+/* --- Collapsible Content Styling --- */
+
+/* The outer container controls the height transition */
+.collapsible-content-container {
+    background-color: #f3f3f3; /* Light background for contrast */
+    overflow: hidden; 
+    transition: max-height 0.3s ease-out; 
+     /* Curved Border */
+    border-radius: 0.5rem; /* Round the corners */
+    padding: 1rem;
+}
+
+/* Class applied when content is visible */
+.content-visible {
+    max-height: 500px; /* Adjust height as needed */
+    transition: max-height 0.3s ease-in;
+}
+
+/* Class applied when content is hidden */
+.content-hidden {
+    max-height: 1;
+    padding: 0;
+    transition: max-height 0.3s ease-out;
+}
+
+/* --- Main Content Styling (Curved, Highlighted) --- */
+
+.main-content-box {
+    background-color: #f3f3f3; /* Light background for contrast */
+    border: 1px solid var(--lwc-colorBorder, #dddbda); /* Border for contrast */
+    padding: 1.5rem 1rem 1rem 1rem; /* Extra padding top to leave space for the button */
+    
+    /* Curved Border */
+    border-radius: 0.5rem; /* Round the corners */
+    
+    /* Ensure no overlap with the hidden content above */
+    margin-top: -1px; 
+    position: relative;
+    z-index: 5;
+}
+
+
+/* --- Separator and Button Positioning --- */
+
+/* The bar is now invisible, acting only as a reference point for the button */
+.separator-bar {
+    position: relative; 
+    height: 0; /* Make the bar invisible */
+    cursor: pointer;
+    z-index: 10; 
+}
+
+/* Position the button exactly on the top border of the main content box */
+.chevron-button {
+    position: absolute;
+    top: 0; /* Positioned at the top edge of the main content box's margin/border area */
+    left: 50%; 
+    transform: translate(-50%, -50%); /* Shifts button up by half its height to sit on the border */
+    
+    /* Styling for the chevron button */
+    border: 1px solid #bb673e;
+    background-color: #bb673e;
+    border-radius: 50%;
+    width: 2rem; 
+    height: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
