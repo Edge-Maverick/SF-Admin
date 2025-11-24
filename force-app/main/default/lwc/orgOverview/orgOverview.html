@@ -3,12 +3,33 @@
         
         <div class="collapsible-content-container">
             <div class={contentClass}>
-                    <ol>
-                        <li>Company Information</li>
-                        <li>Instance & Status from trust API's</li>
-                        <li>Something Org Metrics on trust API's</li>
-                        <li>If Release is With in 45 days, counter (kinda like release readiness resources)</li>
-                    </ol>
+                <template if:true={orgDetails}>
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_1-of-2">
+                            <p><strong>Name:</strong> {orgDetails.Name}</p>
+                            <p><strong>Id:</strong> {orgDetails.Id}</p>
+                            <p><strong>Type:</strong> {orgDetails.OrganizationType}</p>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <p><strong>Instance:</strong> {orgDetails.InstanceName}</p>
+                            <p><strong>Sandbox:</strong> {orgDetails.IsSandbox}</p>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={error}>
+                     <p class="slds-text-color_error">Error retrieving data</p>
+                </template>
+                <ol>
+                    <li>Instance & Status from trust API's</li>
+                    <li>Something Org Metrics on trust API's</li>
+                    <template if:true={releaseInfo}>
+                        <li>
+                            <strong>Upcoming Release:</strong> {releaseInfo.name} <br/>
+                            <strong>Date:</strong> {releaseInfo.releaseDate} <br/>
+                            <strong>Days Remaining:</strong> {releaseInfo.daysRemaining}
+                        </li>
+                    </template>
+                </ol>
             </div>
         </div>
 
