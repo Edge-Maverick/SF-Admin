@@ -109,6 +109,47 @@ public with sharing class OrgOverviewController {
             
             HttpResponse statusRes = http.send(statusReq);
             
+            if (statusRes.getStatusCode() == 200) {
+                Map<String, Object> statusMap = (Map<String, Object>) JSON.deserializeUntyped(statusRes.getBody());
+                wrapper.releaseVersion = (String) statusMap.get('releaseVersion');
+                wrapper.releaseNumber = (String) statusMap.get('releaseNumber');
+                wrapper.apiLevel = calculateApiVersion(wrapper.releaseVersion);
+                
+                // Active Incidents from /status
+                List<Object> statusIncidents = (List<Object>) statusMap.get('Incidents');
+                if (statusIncidents != null) {
+                    for (Object obj : statusIncidents) {
+                        Map<String, Object> m = (Map<String, Object>) obj;
+                        String status = (String) m.get('status');
+                        
+                        // Filter out resolved incidents
+                        if ('Resolved'.equalsIgnoreCase(status) || 'Completed'.equalsIgnoreCase(status)) {
+                            continue;
+                        }
+
+                        IncidentInfo info = new IncidentInfo();
+                        info.id = String.valueOf(m.get('id'));
+                        
+                        Object msgObj = m.get('message');
+                        if (msgObj instanceof Map<String, Object>) {
+                             List<Object> events = (List<Object>) m.get('IncidentEvents');
+                             if (events != null && !events.isEmpty()) {
+                                 Map<String, Object> latestEvent = (Map<String, Object>) events[0];
+                                 info.message = (String) latestEvent.get('message');
+                             } else {
+                                 info.message = 'See Trust for details';
+                             }
+                        } else {
+                            info.message = (String) msgObj;
+                        }
+                        
+                        wrapper.activeIncidents.add(info);
+                    }
+                }
+            } else {
+                wrapper.releaseVersion = 'Error: ' + statusRes.getStatusCode();
+            }
+            
             HttpRequest incReq = new HttpRequest();
             incReq.setEndpoint('https://api.status.salesforce.com/v1/incidents?instance=' + instanceName + '&limit=10');
             incReq.setMethod('GET');

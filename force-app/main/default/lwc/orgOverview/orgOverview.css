@@ -150,18 +150,89 @@
     z-index: 9001;
     overflow-y: auto;
     animation: slideIn 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.drawer-header {
+    background: #f3f2f2;
+    border-bottom: 1px solid #c9c7c5;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 @keyframes slideIn {
-    from {
-        transform: translateX(100%);
-    }
-    to {
-        transform: translateX(0);
-    }
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
 }
 
+/* Info Grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.info-item {
+    background: white;
+    padding: 0.75rem;
+    border-radius: 4px;
+    border: 1px solid #dddbda;
+    text-align: center;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    color: #696969;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.info-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #080707;
+}
+
+/* Status Cards */
 .status-card {
-    background-color: #e3f7e6;
     border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.status-card.success {
+    background-color: #e3f7e6; /* Green-50 */
+    border: 1px solid #b7ebc6;
+    color: #04844b;
+}
+
+.status-card.error {
+    background-color: #fceceb; /* Red-50 */
+    border: 1px solid #f5b1ad;
+    color: #ea001e;
+}
+
+/* Timeline */
+.timeline-item {
+    position: relative;
+    padding-left: 1rem;
+    border-left: 3px solid #dddbda;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-date {
+    font-size: 0.8125rem;
+    color: #696969;
+    margin-bottom: 0.25rem;
+}
+
+.timeline-message {
+    font-size: 0.9375rem;
+    color: #080707;
 }

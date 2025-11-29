@@ -184,61 +184,69 @@
                     <lightning-button-icon icon-name="utility:close" variant="bare" size="large" onclick={handleCloseDrawer}></lightning-button-icon>
                 </div>
                 <div class="drawer-content slds-var-p-around_medium">
-                    <!-- Info Card -->
-                    <div class="slds-box slds-theme_shade slds-var-m-bottom_medium">
-                        <lightning-layout multiple-rows>
-                            <lightning-layout-item size="6" class="slds-var-p-bottom_small">
-                                <p class="slds-text-title_caps">Version</p>
-                                <p class="slds-text-body_regular"><strong>{releaseVersion}</strong></p>
-                            </lightning-layout-item>
-                            <lightning-layout-item size="6" class="slds-var-p-bottom_small">
-                                <p class="slds-text-title_caps">API Version</p>
-                                <p class="slds-text-body_regular"><strong>{apiLevel}</strong></p>
-                            </lightning-layout-item>
-                            <lightning-layout-item size="6">
-                                <p class="slds-text-title_caps">Next Update</p>
-                                <p class="slds-text-body_regular"><strong>{nextUpdateName}</strong></p>
-                            </lightning-layout-item>
-                            <lightning-layout-item size="6">
-                                <p class="slds-text-title_caps">Date</p>
-                                <p class="slds-text-body_regular"><strong><lightning-formatted-date-time value={nextUpdateDate} year="numeric" month="short" day="2-digit"></lightning-formatted-date-time></strong></p>
-                            </lightning-layout-item>
-                        </lightning-layout>
+                    <!-- Info Grid -->
+                    <div class="info-grid slds-var-m-bottom_medium">
+                        <div class="info-item">
+                            <p class="info-label">Version</p>
+                            <p class="info-value">{releaseVersion}</p>
+                        </div>
+                        <div class="info-item">
+                            <p class="info-label">API Version</p>
+                            <p class="info-value">{apiLevel}</p>
+                        </div>
+                        <div class="info-item">
+                            <p class="info-label">Next Update</p>
+                            <p class="info-value">{nextUpdateName}</p>
+                        </div>
+                        <div class="info-item">
+                            <p class="info-label">Date</p>
+                            <p class="info-value">
+                                <lightning-formatted-date-time value={nextUpdateDate} year="numeric" month="short" day="2-digit"></lightning-formatted-date-time>
+                            </p>
+                        </div>
                     </div>
 
                     <!-- Incident Status -->
                     <h3 class="slds-text-heading_small slds-var-m-bottom_small">Incident Status</h3>
-                    <div class="status-card slds-var-p-around_large slds-text-align_center slds-var-m-bottom_medium">
-                        <template if:false={hasActiveIncidents}>
+                    
+                    <template if:false={hasActiveIncidents}>
+                        <div class="status-card success slds-var-p-around_large slds-text-align_center slds-var-m-bottom_medium">
                             <lightning-icon icon-name="utility:check" variant="success" size="large" class="slds-var-m-bottom_small"></lightning-icon>
-                            <h2 class="slds-text-heading_medium slds-text-color_success">All Systems Operational</h2>
-                            <p class="slds-text-color_weak">No active incidents reported for your instance.</p>
-                            <p class="slds-text-body_small slds-var-m-top_small">Last checked: Just now</p>
-                        </template>
-                        <template if:true={hasActiveIncidents}>
+                            <h2 class="slds-text-heading_medium">All Systems Operational</h2>
+                            <p class="slds-var-m-top_x-small">No active incidents reported for your instance.</p>
+                            <p class="slds-text-body_small slds-var-m-top_small" style="opacity: 0.7;">Last checked: Just now</p>
+                        </div>
+                    </template>
+
+                    <template if:true={hasActiveIncidents}>
+                        <div class="status-card error slds-var-p-around_large slds-text-align_center slds-var-m-bottom_medium">
                             <lightning-icon icon-name="utility:warning" variant="error" size="large" class="slds-var-m-bottom_small"></lightning-icon>
-                            <h2 class="slds-text-heading_medium slds-text-color_error">Active Incidents Reported</h2>
+                            <h2 class="slds-text-heading_medium">Active Incidents Reported</h2>
                             <template for:each={activeIncidents} for:item="incident">
-                                <div key={incident.id} class="slds-box slds-theme_error slds-var-m-top_small">
+                                <div key={incident.id} class="slds-box slds-theme_error slds-var-m-top_small slds-text-align_left">
                                     <p>{incident.message}</p>
                                 </div>
                             </template>
-                        </template>
-                    </div>
+                        </div>
+                    </template>
 
                     <!-- Previous Incidents -->
                     <lightning-accordion allow-multiple-sections-open>
                         <lightning-accordion-section name="previous" label="Previous Incidents">
                             <template if:true={pastIncidents}>
-                                <template for:each={pastIncidents} for:item="incident">
-                                    <div key={incident.id} class="slds-box slds-var-m-bottom_small">
-                                        <p><strong><lightning-formatted-date-time value={incident.createdAt} year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit"></lightning-formatted-date-time></strong></p>
-                                        <p>{incident.message}</p>
-                                    </div>
-                                </template>
+                                <div class="timeline">
+                                    <template for:each={pastIncidents} for:item="incident">
+                                        <div key={incident.id} class="timeline-item">
+                                            <p class="timeline-date">
+                                                <lightning-formatted-date-time value={incident.createdAt} year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
+                                            </p>
+                                            <p class="timeline-message">{incident.message}</p>
+                                        </div>
+                                    </template>
+                                </div>
                             </template>
                             <template if:false={pastIncidents}>
-                                <p>No recent incidents.</p>
+                                <p class="slds-text-color_weak slds-text-align_center slds-var-p-vertical_medium">No recent incidents found.</p>
                             </template>
                         </lightning-accordion-section>
                         <lightning-accordion-section name="health" label="Service Health">
