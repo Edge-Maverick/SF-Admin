@@ -1,0 +1,155 @@
+/* --- THEME COLORS (Keep these for text/bar coloring) --- */
+.color-green{ color: #10b981; }
+.color-red{ color: #ef4444; }
+.color-orange{ color: #f59e0b; }
+.color-blue{ color: #3b82f6; }
+
+/* --- KPI CARD BASE (From Reference) --- */
+.kpi-card { 
+    padding: 1rem;
+    background-color: white;
+    border-radius:10px;
+}
+.kpi-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+}
+.separator {
+    width: 85%;
+    margin: 10px 0;
+    border-top: 1px solid #e2e8f0;
+}
+.kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+.kpi-total {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+/* --- 1. CIRCULAR PROGRESS RING (Completed from Reference) --- */
+.progress-ring-container {
+    position: relative;
+    margin-left: auto;
+}
+/* This rotation makes the progress start at the top (12 o'clock) */
+.progress-ring { transform: rotate(-90deg);} 
+
+.progress-ring__circle {
+    transition: stroke-dashoffset 0.8s ease-out; /* Smoother transition */
+    stroke-linecap: round;
+}
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%; /* Adjusted to 50% for 80px width */
+    transform: translate(-50%, -50%);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #334155;
+}
+
+/* --- 2. PROGRESS BAR --- */
+.progress-bar-container {
+    width: 100%;
+    height: 10px;
+    background-color: #e2e8f0;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+.progress-bar-fill {
+    height: 100%;
+    /* background-color is set dynamically by JS style */
+    transition: width 0.8s ease-in-out;
+    position: relative;
+}
+.progress-bar-text {
+    position: absolute;
+    right: 5px;
+    top: -25px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+/* --- 3. HALF CIRCLE SPEEDOMETER --- */
+.half-ring-container {
+    width: 80px;
+    height: 40px; /* Half the width */
+    position: relative;
+    overflow: hidden; /* Hides the lower half of the circle */
+}
+.half-ring-meter {
+    width: 80px;
+    height: 80px;
+    /* Move the half-meter up so only the top half shows */
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* Rotate to set 0% at the left and 100% at the right */
+    transform: rotate(180deg);
+}
+
+.half-ring-meter .progress-ring__circle {
+    /* Half-ring stroke starts at the right */
+    transform-origin: 50% 50%;
+    transition: transform 0.8s ease-out, stroke 0.8s;
+}
+
+.half-ring-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+/* --- 4. FILL CONTAINER --- */
+.fill-container {
+    position: relative;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+.fill-level {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0.7;
+    transition: height 0.8s ease-in-out;
+}
+.fill-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    z-index: 10;
+}
+.fill-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+}
+.fill-percent {
+    font-size: 2rem;
+    font-weight: 900;
+}
+.fill-value {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}

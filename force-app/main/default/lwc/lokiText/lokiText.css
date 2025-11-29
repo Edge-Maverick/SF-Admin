@@ -1,0 +1,44 @@
+.color-green{
+    color:green;
+}
+.color-red{
+    color:red;
+}
+.color-orange{
+    color:orange;
+}
+.color-blue{
+    color:#4268d0;
+}
+
+/* --- KPI CARD BASE (From Reference) --- */
+.kpi-card { 
+    padding: 1rem;
+    background-color: white; 
+    border-radius:10px;
+}
+.kpi-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+}
+.separator {
+    width: 85%;
+    margin: 10px 0;
+    border-top: 1px solid #e2e8f0;
+}
+.kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+.kpi-total {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.center-vertically {
+    display: flex;
+    align-items: center;   /* vertical alignment */
+    justify-content: center; /* horizontal alignment (optional) */
+}

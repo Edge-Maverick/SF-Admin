@@ -1,0 +1,84 @@
+<template>
+    <div class="wrapper">
+
+        <!-- LEFT CARD — DETAILS -->
+        <article class="mini-card">
+            <header class="mini-header">
+                <lightning-icon icon-name="standard:company" size="small"></lightning-icon>
+                <h2>Organization Details</h2>
+            </header>
+
+            <template if:true={orgDetails}>
+                <div class="details-grid">
+
+                    <div class="detail-row">
+                        <lightning-icon icon-name="standard:account" size="x-small" class="icon name-icon"></lightning-icon>
+                        <div>
+                            <p class="label">Name</p>
+                            <p class="value">{orgDetails.Name}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <lightning-icon icon-name="standard:identifier" size="x-small" class="icon id-icon"></lightning-icon>
+                        <div>
+                            <p class="label">Org Id</p>
+                            <p class="value">{orgDetails.Id}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <lightning-icon icon-name="standard:server" size="x-small" class="icon instance-icon"></lightning-icon>
+                        <div>
+                            <p class="label">Instance</p>
+                            <p class="value">{orgDetails.InstanceName}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <lightning-icon icon-name="standard:code_playground" size="x-small" class="icon sandbox-icon"></lightning-icon>
+                        <div>
+                            <p class="label">Sandbox</p>
+                            <lightning-badge label={sandboxLabel} class={computedSandboxClass}></lightning-badge>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="utilization-box">
+                    <p class="util-label">Environment Utilization</p>
+                    <lightning-progress-bar value="85" variant="circular" size="small"></lightning-progress-bar>
+                </div>
+            </template>
+        </article>
+
+        <!-- RIGHT CARD — RELEASE INFO -->
+        <article class="mini-card">
+            <header class="mini-header">
+                <lightning-icon icon-name="standard:topic" size="small"></lightning-icon>
+                <h2>Release Info</h2>
+            </header>
+
+            <div class="release-box">
+                <template if:true={releaseInfo}>
+                    <p class="release-title">{releaseInfo.release}</p>
+                    <p class="release-value">{releaseInfo.window}</p>
+
+                    <template if:true={releaseInfo.maint}>
+                        <p class="release-note">{releaseInfo.maint}</p>
+                    </template>
+
+                    <p class="release-note">
+                        View more on <a href="https://status.salesforce.com" target="_blank">Trust</a>.
+                    </p>
+                </template>
+
+                <template if:false={releaseInfo}>
+                    <p class="release-title">Release Information</p>
+                    <p class="release-value empty">Not Available</p>
+                </template>
+            </div>
+        </article>
+
+    </div>
+</template>

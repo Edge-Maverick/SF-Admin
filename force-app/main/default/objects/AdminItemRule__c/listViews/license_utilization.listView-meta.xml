@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>license_utilization</fullName>
+    <columns>NAME</columns>
+    <columns>Behavior__c</columns>
+    <columns>Module__c</columns>
+    <columns>ObjectAPIName__c</columns>
+    <columns>ItemKey__c</columns>
+    <columns>ItemLabel__c</columns>
+    <columns>Description__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Module__c</field>
+        <operation>equals</operation>
+        <value>License Utilization</value>
+    </filters>
+    <label>License Utilization</label>
+</ListView>

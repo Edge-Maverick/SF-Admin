@@ -1,41 +1,84 @@
 <template>
-    <div>
-        <lightning-layout multiple-rows=false>
-            <lightning-layout-item>
+    <template lwc:if={hasAllAdminPermission}>
+    <div class="org-horizon-main">
                 <div class="navigation-container">
-                <lightning-vertical-navigation selected-item={selectedItem} onselect={handleSelect} class="navigation">
-                    <lightning-vertical-navigation-section label="Hi, Lokanadh">
-                        <lightning-vertical-navigation-item label="Overview" name="org_overview"></lightning-vertical-navigation-item>
-                        <lightning-vertical-navigation-item label="Licence Utilization" name="licence_utilization"></lightning-vertical-navigation-item>
-                        <lightning-vertical-navigation-item label="User Adoption" name="user_adoption"></lightning-vertical-navigation-item>
-                        <lightning-vertical-navigation-item label="Login Forensics" name="login_forensics"></lightning-vertical-navigation-item>
-                        <lightning-vertical-navigation-item-badge label="Setup Audit" name="setup_audit" badge-count={updatedCount}></lightning-vertical-navigation-item-badge>
-                    </lightning-vertical-navigation-section>
-                    <lightning-vertical-navigation-overflow>
-                        <lightning-vertical-navigation-item label="Extra Report 1" name="reports_extra1"></lightning-vertical-navigation-item>
-                        <lightning-vertical-navigation-item label="Extra Report 2" name="reports_extra2"></lightning-vertical-navigation-item>
-                        <lightning-vertical-navigation-item label="Extra Report 3" name="reports_extra3"></lightning-vertical-navigation-item>
-                        <lightning-vertical-navigation-item label="Extra Report 4" name="reports_extra4"></lightning-vertical-navigation-item>
-                        <lightning-vertical-navigation-item label="Extra Report 5" name="reports_extra5"></lightning-vertical-navigation-item>
-                    </lightning-vertical-navigation-overflow>
-                    <lightning-vertical-navigation-overflow>
-                        <lightning-vertical-navigation-item label="Extra Folder 1" name="folders_extra1"></lightning-vertical-navigation-item>
-                        <lightning-vertical-navigation-item label="Extra Folder 2" name="folders_extra2"></lightning-vertical-navigation-item>
-                        <lightning-vertical-navigation-item label="Extra Folder 3" name="folders_extra3"></lightning-vertical-navigation-item>
-                    </lightning-vertical-navigation-overflow>
+                <div class="slds-var-p-around_small">
+                    <strong class="slds-text-heading_small" style="color:#bc876d">Hello! <strong style="color:#bb673e;font-size:24px"> {userName}</strong>  </strong>
+                    <div class="padding:0;margin:0;"><strong class="" style="color:#bc876d;font-size:5px;padding:0;margin:0;">ADMIN101.ADMIN101.ADMIN101.ADMIN101.ADMIN101.ADMIN101</strong></div>
+                    <div class="navigation-highlight">
+                        <template lwc:if={currentOrgInfo}>
+                            <ol>
+                                <li>
+                                    <span style="font-size: 10px;">Name: </span>
+                                    <span class="quick-copy slds-text-link_faux" onclick={copyTextAndNotify}>{currentOrgInfo.Name}</span></li>
+                                <li>
+                                    <span style="font-size: 10px;">OrgId: </span>
+                                    <span class="quick-copy slds-text-link_faux" onclick={copyTextAndNotify}>{currentOrgInfo.Id}</span>
+                                    </li>
+                                <li>
+                                    <span class="slds-badge">Sandbox</span>
+                                    <span class="slds-badge">Production</span>
+                                </li>
+                            </ol>
+                        </template>
+                        <template lwc:else>
+                            <lightning-dynamic-icon 
+                                type="ellie" 
+                                alternative-text="Loading..">
+                            </lightning-dynamic-icon>
+                            <lightning-spinner alternative-text="Loading" size="x-small"></lightning-spinner>
+                        </template>
+                    </div>
+                </div>
+                <lightning-vertical-navigation selected-item={currentContent} onselect={handleSelect} class="navigation">
+                    
+                    <lightning-vertical-navigation-item-icon label="Overview" name="org_overview" icon-name="utility:home"></lightning-vertical-navigation-item-icon>
+                    <lightning-vertical-navigation-item label="Licence Utilization" name="licence_utilization"></lightning-vertical-navigation-item>
+                    <lightning-vertical-navigation-item label="User Adoption" name="user_adoption"></lightning-vertical-navigation-item>
+                    <lightning-vertical-navigation-item label="Login Forensics" name="login_forensics"></lightning-vertical-navigation-item>
+                    <lightning-vertical-navigation-item label="Setup Audit Trail" name="setup_audit"></lightning-vertical-navigation-item>
+                    <hr style="margin-top:5px; margin-bottom:10px"></hr>
                     <lightning-vertical-navigation-section label="Launch Pad">
                         <lightning-vertical-navigation-item-icon label="Trust & Status" name="folders_shared" icon-name="utility:new_window"></lightning-vertical-navigation-item-icon>
                         <lightning-vertical-navigation-item-icon label="Salesforce Go" name="folders_created" icon-name="utility:new_window"></lightning-vertical-navigation-item-icon>
                         <lightning-vertical-navigation-item label="All Folders" name="folders_all"></lightning-vertical-navigation-item>
                     </lightning-vertical-navigation-section>
                 </lightning-vertical-navigation>
+                {currentContent}
                 </div>
-            </lightning-layout-item>
-            <lightning-layout-item>
                 <div class="content-container">
-                    <c-org-overview></c-org-overview>
+                    <!-- START :: MAIN CONTENT HOLDER -->
+                    <template lwc:if={showOrgOverview}>
+                        <c-org-overview></c-org-overview>
+                    </template>
+                    <template lwc:if={showLicenceUtilization}>
+                        <c-license-utilization></c-license-utilization>
+                    </template>
+                    <!-- END :: MAIN CONTENT HOLDER -->
                 </div>
-            </lightning-layout-item>
-        </lightning-layout>
     </div>
+    </template>
+    <template lwc:else>
+        <div class="demo-only" style="height:24rem">
+        <section role="dialog" tabindex="0" aria-modal="true" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" class="slds-modal slds-fade-in-open slds-modal_prompt">
+        <div class="slds-modal__container">
+        <div class="slds-modal__header slds-theme_error slds-theme_alert-texture">
+        <h1 class="slds-text-heading_medium" id="prompt-heading-id">Service Unavailable</h1>
+        </div>
+        <div class="slds-modal__content slds-p-around_medium" id="prompt-message-wrapper">
+        <p>There is someissue with the confiiuration or permissions please reach out to your org System Administrator</p>
+        <ul class="slds-list_dotted">
+            <li>- The current user does not have the right permission.</li>
+            <li>Check for open issue here..</li>
+            <li>List Item</li>
+        </ul>
+        </div>
+        <div class="slds-modal__footer slds-theme_default">
+        <!--button class="slds-button slds-button_neutral">Got It</button-->
+        </div>
+        </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        </div>
+    </template>
 </template>

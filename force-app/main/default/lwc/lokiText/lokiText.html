@@ -1,0 +1,26 @@
+<template>
+    <div class="slds-box slds-p-around_medium slds-m-around_xx-small kpi-card">
+        <lightning-layout multiple-rows=false horizontal-align="spread" vertical-align="center">
+            <lightning-layout-item size={width} flexibility="auto">
+                <div class="slds-text-align_left slds-has-flexi-truncate kpi-label">
+                    <p class="slds-truncate" title={title}>{title}</p>
+                </div>
+                <hr class="separator"/>
+                <div class={categorizeStyle} style="font-weight:800;font-size:large;height:45px;">
+                    <strong class="kpi-value">{text}</strong>
+                    <template lwc:if={subText}>
+                        <p class="kpi-total">{subText}</p>
+                    </template>
+                </div>
+                
+            </lightning-layout-item>   
+            <template lwc:if={displayIcon}>
+                <lightning-layout-item size="3" flexibility="auto" class="slds-text-align_center center-vertically" >
+                    <div class="slds-text-align_center center-vertically" >
+                        <slot></slot>
+                    </div>
+                </lightning-layout-item>
+            </template>
+        </lightning-layout>
+    </div>
+</template>

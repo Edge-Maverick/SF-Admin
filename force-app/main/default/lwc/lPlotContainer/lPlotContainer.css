@@ -1,0 +1,108 @@
+/* Define the base styles and themes in this style block */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6; /* A light gray background from Tailwind's palette */
+}
+
+/*
+    * BASE CARD STYLES
+    * This class defines the structure, shadows, and transitions for all cards.
+    * It's designed to mimic the appearance of a modern UI card.
+*/
+.plot-card {
+    border-radius: 0.75rem; /* Rounded corners */
+    overflow: hidden; /* Ensures child elements conform to the rounded corners */
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    transition: all 0.3s ease-in-out;
+    border-width: 1px;
+    display: flex;
+    flex-direction: column;
+}
+
+.plot-card:hover {
+    transform: translateY(-5px); /* Add a subtle lift effect on hover */
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+}
+
+.plot-card-header {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    font-weight: 600; /* Semi-bold */
+}
+
+.plot-card-header .icon {
+    width: 1.25rem; /* 20px */
+    height: 1.25rem; /* 20px */
+    margin-right: 0.75rem;
+}
+
+.plot-card-body {
+    padding: 1rem;
+    flex-grow: 1; /* Allows body to fill available space */
+}
+
+/* * THEME DEFINITIONS
+    * Each theme overrides the CSS variables to change the card's appearance.
+*/
+
+/* --- Default Theme (Applied via .plot-card class) --- */
+/* :host is the component's shadow boundary.
+We define CSS variables for our themes here.
+*/
+.plot-card , .theme-light{
+    /* --- Light Theme (Default) --- */
+    --card-bg-color: #ffffff;
+    --header-bg-color: #f9fafb; /* Very light gray */
+    --header-text-color: #111827; /* Dark gray */
+    --body-text-color: #374151; /* Medium gray */
+    --border-color: #e5e7eb; /* Light border */
+    --icon-color: #4b5563;
+}
+
+/* --- Batman Theme (The Dark Knight) --- */
+.theme-batman {
+    --card-bg-color: #1f1f1f;
+    --header-bg-color: #000000;
+    --header-text-color: #fde16d; /* Bat-signal yellow */
+    --body-text-color: #e0e0e0; /* Light gray for readability */
+    --border-color: #444444;
+    --icon-color: #fde16d;
+}
+
+/* --- Family Guy Theme (Quahog) --- */
+.theme-family-guy {
+    --card-bg-color: #fdf5e6; /* Off-white wall color */
+    --header-bg-color: #904c27; /* Brown couch color */
+    --header-text-color: #ffffff;
+    --body-text-color: #333333;
+    --border-color: #2e8b57; /* Peter's green pants */
+    --icon-color: #ffffff;
+    border-width: 2px; /* A thicker, more cartoonish border */
+}
+
+/* --- Marvel Loki Theme (TVA & Asgard) --- */
+.theme-loki {
+    --card-bg-color: #e9e5d8; /* TVA beige/paper */
+    --header-bg-color: #3a5f4f; /* Deep, muted TVA green */
+    --header-text-color: #d4af37; /* Asgardian gold */
+    --body-text-color: #3d2b1f; /* Dark TVA brown */
+    --border-color: #d4af37;
+    --icon-color: #d4af37;
+}
+
+/* Apply the variables to the card elements */
+.plot-card {
+    background-color: var(--card-bg-color);
+    border-color: var(--border-color);
+}
+.plot-card-header {
+    background-color: var(--header-bg-color);
+    color: var(--header-text-color);
+}
+.plot-card-body {
+    color: var(--body-text-color);
+}
+.plot-card-header .icon {
+    stroke: var(--icon-color);
+}

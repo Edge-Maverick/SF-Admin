@@ -1,0 +1,21 @@
+<template>
+    <div class={themeClass}>
+        <div class="plot-card-header">
+            <template lwc:if={iconName}>
+                <lightning-icon icon-name={iconName} class="icon"></lightning-icon>
+            </template>
+            <template lwc:if={title}>
+                <h3>{title}</h3>
+            </template>
+            <template lwc:if={subtitle}>
+                <span>{subtitle}</span>
+            </template>
+            <template lwc:if={helpText}>
+                <lightning-helptext content={helpText}></lightning-helptext>
+            </template>
+        </div>
+        <div class="plot-card-body">
+            <slot name="body"></slot>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,78 @@
+<template>
+    <div class="slds-box slds-p-around_medium slds-m-around_xx-small kpi-card">
+        
+        <template lwc:if={isShowProgressVisual}>
+            <lightning-layout multiple-rows=false horizontal-align="spread" vertical-align="center">
+                <lightning-layout-item size={width} flexibility="auto">
+                    <div class="slds-text-align_left slds-has-flexi-truncate kpi-label ">
+                        <p class="slds-truncate" title={title}>{title}</p>
+                    </div>
+                    <hr class="separator"/>
+                    <div class={categorizeStyle} style="font-weight:800;font-size:large;height:45px">
+                        <p class="kpi-value">{usedValue}</p>
+                        <template lwc:if={totalValue}>
+                            <div class="slds-has-flexi-truncate">
+                                <p class="kpi-total slds-truncate">of {totalValue}</p>
+                            </div>
+                        </template>
+                    </div>
+                </lightning-layout-item>
+                
+                <lightning-layout-item size="4" flexibility="auto" class="slds-text-align_center center-vertically">
+                    <div class="progress-ring-container" lwc:if={isRingMode}>
+                        <svg class="progress-ring" width="80" height="80">
+                            <circle class="progress-ring__circle-bg" stroke="#e2e8f0" stroke-width="6" fill="transparent" r="32" cx="40" cy="40"/>
+                            <circle class="progress-ring__circle" stroke-width="6" fill="transparent" r="32" cx="40" cy="40" 
+                                stroke-dasharray={dashArray}
+                                style={progressRingStyle}
+                            />
+                        </svg>
+                        <span class="progress-text">{actualPercent}%</span>
+                    </div>
+
+                    <div class="half-ring-container" lwc:if={isHalfRingMode}>
+                        <svg class="half-ring-meter" viewBox="0 0 80 40">
+                            <path d="M 5 40 A 35 35 0 0 1 75 40" fill="none" stroke="#e2e8f0" stroke-width="6" />
+                            <path d="M 5 40 A 35 35 0 0 1 75 40" fill="none" stroke-width="6" 
+                                style={halfRingStyle}
+                                stroke-dasharray="110" 
+                                stroke-dashoffset="110"
+                                class="progress-ring__circle"
+                            />
+                        </svg>
+                        <span class="half-ring-text" style={categorizeStyle}>{actualPercent}%</span>
+                    </div>
+                </lightning-layout-item>
+            </lightning-layout>
+        </template>
+        
+        <template lwc:if={isBarMode}>
+            <div class="slds-text-align_left kpi-label slds-m-bottom_x-small">
+                <span>{title}</span>
+            </div>
+            <div class={categorizeStyle} style="font-weight:800;font-size:large;min-height:40px">
+                <p class="kpi-value slds-m-bottom_small">{usedValue}</p>
+                <template lwc:if={totalValue}>
+                    <p class="kpi-total slds-m-bottom_small">of {totalValue}</p>
+                </template>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style={progressBarWidth}>
+                    <span class="progress-bar-text">{actualPercent}%</span>
+                </div>
+            </div>
+        </template>
+
+        <template lwc:if={isFillMode}>
+            <div class="fill-container">
+                <div class="fill-level" style={fillLevelStyle}></div>
+                <div class="fill-content">
+                    <p class="fill-title">{title}</p>
+                    <p class="fill-percent" style={fillPercentStyle}>{actualPercent}%</p>
+                    <p class="fill-value">{usedValue}<template lwc:if={totalValue}> of {totalValue}</template></p>
+                </div>
+            </div>
+        </template>
+
+    </div>
+</template>

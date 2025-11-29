@@ -3,15 +3,46 @@
     margin:0 !important;
     background: transparent !important;
 }
+.org-horizon-main{
+    margin: 0;
+    height: 100%;
+    display: flex;
+    overflow: hidden; 
+}
 
 .navigation-container {
-    background-color: whitesmoke;
-    min-width:200px;
-    border-radius: 1rem;
-    border: 1px solid #625d5d;
+    background-color: white;
+    min-width: 205px;
+    border-radius: 1rem 0 0 1rem;
+    max-width: 205px;
+    overflow-y: auto;
+    padding-right: 8px;
+    margin-right: 0px;
+}
+.navigation-container > .navigation{
+    margin: 0;
 }
 
 .content-container{
-    margin-left: 0.5rem;
-    width: 100%;
+    margin-left: 0px;
+    padding: 10px;
+    flex: 1; 
+    overflow-y: auto;
+    background-color: rgba(245, 245, 245, 0.75) !important;
+    border-radius: 0 1rem 1rem 0;
+}
+
+.navigation-highlight{
+    margin: 0px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    display:block;
+    border-width: 1px 0;
+    border-style: solid;
+    border-color: #bda295;
+}
+
+.quick-copy {
+    color: rgb(27, 86, 183);
+    font-style: italic;
 }
