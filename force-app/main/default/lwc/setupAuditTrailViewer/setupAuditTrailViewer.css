@@ -1,5 +1,6 @@
 .filter-container {
-    background-color: #f3f2f2;
+    background-color: #faffff;
+    border: 1px solid #dddbda;
     border-radius: 0.25rem;
     padding: 1rem;
 }
@@ -35,14 +36,21 @@
 
 /* Table styling */
 .slds-table thead th {
-    background-color: #fafaf9;
+    background-color: #f3f2f2;
     font-weight: 700;
     position: sticky;
     top: 0;
     z-index: 1;
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+    color: #3e3e3c;
 }
 
 .slds-accordion__section {
     border-bottom: 1px solid #dddbda;
+}
+
+/* Ensure text wrapping works */
+.slds-cell-wrap {
+    white-space: normal;
+    word-wrap: break-word;
 }

@@ -1,67 +1,72 @@
 <template>
-    <lightning-layout vertical-align="spread" multiple-rows>
-        <lightning-layout-item size="12" >
-            <div style="width:100%;" class="slds-p-around_medium">
-                <strong class="slds-text-heading_medium">User Licences</strong>
+    <lightning-card title="License Utilization" icon-name="standard:opportunity">
+        <div class="slds-var-p-around_medium">
+            <div class="header-section slds-var-m-bottom_medium">
+                <h2 class="slds-text-heading_small">User Licenses</h2>
                 <lightning-helptext content="Shows the utilization of licenses across the org. ( source: UserLicense|User )"></lightning-helptext>
             </div>
-        </lightning-layout-item>
-        <lightning-layout-item size="9" >
 
-            <lightning-layout horizontal-align="spread">
-                <lightning-layout-item size="3">
-                    <c-loki-kpi-progress title="USER LICENSE %" used-value={totalUserLicence.usedValue} total-value={totalUserLicence.totalValue} display-mode="ring" auto-format inverse-format>
-                    </c-loki-kpi-progress>
+            <lightning-layout multiple-rows>
+                <lightning-layout-item size="12" large-device-size="9" padding="around-small">
+                    <div class="main-content-area">
+                        <lightning-layout multiple-rows>
+                            <lightning-layout-item size="12" medium-device-size="6" large-device-size="3" padding="around-small">
+                                <c-loki-kpi-progress title="USER LICENSE %" used-value={totalUserLicence.usedValue} total-value={totalUserLicence.totalValue} display-mode="ring" auto-format inverse-format>
+                                </c-loki-kpi-progress>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="12" medium-device-size="6" large-device-size="3" padding="around-small">
+                                <c-loki-text title="DORMANT USERS #" text={dormantUsers} sub-text="< Last 90 days" format={dormatUserForamt}>
+                                    <lightning-icon icon-name="utility:resource_absence" size="large"></lightning-icon>
+                                </c-loki-text>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="12" medium-device-size="6" large-device-size="3" padding="around-small">
+                                <c-loki-kpi-progress title="CRITICAL LICENSE %" used-value={totalUserLicenceCritical.usedValue} total-value={totalUserLicenceCritical.totalValue} display-mode="ring">
+                                </c-loki-kpi-progress>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="12" medium-device-size="6" large-device-size="3" padding="around-small">
+                                <c-loki-text title="AVAILABLE CRITICAL LICENCE #" text={totalUserLicenceCritical.remainingValue} hide-icon>
+                                </c-loki-text>
+                            </lightning-layout-item>
+                        </lightning-layout>
+
+                        <div class="chart-container slds-var-m-top_medium">
+                            <template lwc:if={licenceUtilizationData}>
+                                <c-loki-bar-plot
+                                    horizontal="true"
+                                    title="License Utilization (%)"
+                                    plot-data={licenceUtilizationData}
+                                    dimension="Label"
+                                    measure="Percent"
+                                    sort="desc"
+                                    extra-width="250">
+                                </c-loki-bar-plot>
+                            </template>
+                            <template lwc:else>
+                                <div class="slds-is-relative slds-var-p-vertical_large">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
                 </lightning-layout-item>
-                <lightning-layout-item size="3">
-                    <c-loki-text title="DORMANT USERS #" text={dormantUsers} sub-text="< Last 90 days" format={dormatUserForamt}>
-                        <lightning-icon icon-name="utility:resource_absence" size="large"></lightning-icon>
-                    </c-loki-text>
-                </lightning-layout-item>
-                <lightning-layout-item size="3">
-                    <c-loki-kpi-progress title="CRITICAL LICENSE %" used-value={totalUserLicenceCritical.usedValue} total-value={totalUserLicenceCritical.totalValue} display-mode="ring">
-                    </c-loki-kpi-progress>
-                </lightning-layout-item>
-                <lightning-layout-item size="3">
-                    <c-loki-text title="AVAILABLE CRITICAL LICENCE #" text={totalUserLicenceCritical.remainingValue} hide-icon>
-                    </c-loki-text>
+                
+                <lightning-layout-item size="12" large-device-size="3" padding="around-small">
+                    <div class="sidebar-stats">
+                        <c-loki-text title="PERM SET LICENCES" value="200"></c-loki-text>
+                        <c-loki-text title="USED LICENCES" value="200"></c-loki-text>
+                        <c-loki-text title="TOTAL LICENCES" value="200"></c-loki-text>
+                        <c-loki-text title="USED LICENCES" value="SOME!">                
+                            <lightning-icon icon-name="utility:jump_to_bottom" size="small"></lightning-icon>
+                        </c-loki-text>
+                    </div>
                 </lightning-layout-item>
             </lightning-layout>
-            <template lwc:if={licenceUtilizationData}>
-                <c-loki-bar-plot
-                    horizontal="true"
-                    title="License Utilization (%)"
-                    plot-data={licenceUtilizationData}
-                    dimension="Label"
-                    measure="Percent"
-                    sort="desc"
-                    extra-width="250">
-                </c-loki-bar-plot>
-            </template>
-            <template lwc:else>
-                loading..
-            </template>
-            
-        </lightning-layout-item>
-        <lightning-layout-item size="3" >
-            <c-loki-text title="PERM SET LICENCES" value="200">
-            </c-loki-text>
-            <c-loki-text title="USED LICENCES" value="200">
-            </c-loki-text>
-            <c-loki-text title="TOTAL LICENCES" value="200">
-            </c-loki-text>
-            <c-loki-text title="USED LICENCES" value="SOME!">                
-                <lightning-icon icon-name="utility:jump_to_bottom" size="small"></lightning-icon>
-            </c-loki-text>
-        </lightning-layout-item>
-    </lightning-layout>
-    <hr/>
-    <lightning-layout vertical-align="spread" multiple-rows>
-        <lightning-layout-item size="12" >
-            <div style="width:100%;" class="slds-p-around_medium">
-                <strong class="slds-text-heading_medium">Permission Set Licences</strong>
-            </div>
-        </lightning-layout-item>
 
-    </lightning-layout>
+            <div class="slds-border_top slds-var-m-vertical_medium"></div>
+
+            <div class="header-section slds-var-m-bottom_medium">
+                <h2 class="slds-text-heading_small">Permission Set Licenses</h2>
+            </div>
+        </div>
+    </lightning-card>
 </template>

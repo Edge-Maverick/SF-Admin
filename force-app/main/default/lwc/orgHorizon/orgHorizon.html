@@ -1,87 +1,86 @@
 <template>
     <template lwc:if={hasAllAdminPermission}>
-    <div class="org-horizon-main">
-                <div class="navigation-container">
-                <div class="slds-var-p-around_small">
-                    <strong class="slds-text-heading_small" style="color:#bc876d">Hello! <strong style="color:#bb673e;font-size:24px"> {userName}</strong>  </strong>
-                    <div class="padding:0;margin:0;"><strong class="" style="color:#bc876d;font-size:5px;padding:0;margin:0;">ADMIN101.ADMIN101.ADMIN101.ADMIN101.ADMIN101.ADMIN101</strong></div>
-                    <div class="navigation-highlight">
+        <div class="org-horizon-main">
+            <div class="navigation-container">
+                <div class="user-profile-section slds-var-p-around_small">
+                    <div class="greeting-container">
+                        <span class="greeting-text">Hello!</span>
+                        <span class="user-name">{userName}</span>
+                    </div>
+                    
+                    <div class="org-details-container">
                         <template lwc:if={currentOrgInfo}>
-                            <ol>
-                                <li>
-                                    <span style="font-size: 10px;">Name: </span>
-                                    <span class="quick-copy slds-text-link_faux" onclick={copyTextAndNotify}>{currentOrgInfo.Name}</span></li>
-                                <li>
-                                    <span style="font-size: 10px;">OrgId: </span>
-                                    <span class="quick-copy slds-text-link_faux" onclick={copyTextAndNotify}>{currentOrgInfo.Id}</span>
-                                    </li>
-                                <li>
-                                    <span class="slds-badge">Sandbox</span>
-                                    <span class="slds-badge">Production</span>
-                                </li>
-                            </ol>
+                            <div class="org-detail-item">
+                                <span class="org-label">Name:</span>
+                                <span class="quick-copy slds-text-link_faux" onclick={copyTextAndNotify}>{currentOrgInfo.Name}</span>
+                            </div>
+                            <div class="org-detail-item">
+                                <span class="org-label">OrgId:</span>
+                                <span class="quick-copy slds-text-link_faux" onclick={copyTextAndNotify}>{currentOrgInfo.Id}</span>
+                            </div>
+                            <div class="org-badges slds-var-m-top_x-small">
+                                <lightning-badge label="Sandbox" class="slds-var-m-right_xx-small"></lightning-badge>
+                                <lightning-badge label="Production"></lightning-badge>
+                            </div>
                         </template>
                         <template lwc:else>
-                            <lightning-dynamic-icon 
-                                type="ellie" 
-                                alternative-text="Loading..">
-                            </lightning-dynamic-icon>
-                            <lightning-spinner alternative-text="Loading" size="x-small"></lightning-spinner>
+                            <div class="slds-is-relative slds-var-p-vertical_medium">
+                                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                            </div>
                         </template>
                     </div>
                 </div>
+                
                 <lightning-vertical-navigation selected-item={currentContent} onselect={handleSelect} class="navigation">
-                    
                     <lightning-vertical-navigation-item-icon label="Overview" name="org_overview" icon-name="utility:home"></lightning-vertical-navigation-item-icon>
                     <lightning-vertical-navigation-item label="Licence Utilization" name="licence_utilization"></lightning-vertical-navigation-item>
                     <lightning-vertical-navigation-item label="User Adoption" name="user_adoption"></lightning-vertical-navigation-item>
                     <lightning-vertical-navigation-item label="Login Forensics" name="login_forensics"></lightning-vertical-navigation-item>
                     <lightning-vertical-navigation-item label="Setup Audit Trail" name="setup_audit"></lightning-vertical-navigation-item>
-                    <hr style="margin-top:5px; margin-bottom:10px"></hr>
+                    
+                    <div class="slds-border_top slds-var-m-vertical_small"></div>
+                    
                     <lightning-vertical-navigation-section label="Launch Pad">
                         <lightning-vertical-navigation-item-icon label="Trust & Status" name="folders_shared" icon-name="utility:new_window"></lightning-vertical-navigation-item-icon>
                         <lightning-vertical-navigation-item-icon label="Salesforce Go" name="folders_created" icon-name="utility:new_window"></lightning-vertical-navigation-item-icon>
                         <lightning-vertical-navigation-item label="All Folders" name="folders_all"></lightning-vertical-navigation-item>
                     </lightning-vertical-navigation-section>
                 </lightning-vertical-navigation>
-                {currentContent}
-                </div>
-                <div class="content-container">
-                    <!-- START :: MAIN CONTENT HOLDER -->
-                    <template lwc:if={showOrgOverview}>
-                        <c-org-overview></c-org-overview>
-                    </template>
-                    <template lwc:if={showLicenceUtilization}>
-                        <c-license-utilization></c-license-utilization>
-                    </template>
-                    <template lwc:if={showSetupAuditTrail}>
-                        <c-setup-audit-trail-viewer></c-setup-audit-trail-viewer>
-                    </template>
-                    <!-- END :: MAIN CONTENT HOLDER -->
-                </div>
-    </div>
+            </div>
+            
+            <div class="content-container">
+                <!-- START :: MAIN CONTENT HOLDER -->
+                <template lwc:if={showOrgOverview}>
+                    <c-org-overview></c-org-overview>
+                </template>
+                <template lwc:if={showLicenceUtilization}>
+                    <c-license-utilization></c-license-utilization>
+                </template>
+                <template lwc:if={showSetupAuditTrail}>
+                    <c-setup-audit-trail-viewer></c-setup-audit-trail-viewer>
+                </template>
+                <!-- END :: MAIN CONTENT HOLDER -->
+            </div>
+        </div>
     </template>
     <template lwc:else>
         <div class="demo-only" style="height:24rem">
-        <section role="dialog" tabindex="0" aria-modal="true" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" class="slds-modal slds-fade-in-open slds-modal_prompt">
-        <div class="slds-modal__container">
-        <div class="slds-modal__header slds-theme_error slds-theme_alert-texture">
-        <h1 class="slds-text-heading_medium" id="prompt-heading-id">Service Unavailable</h1>
-        </div>
-        <div class="slds-modal__content slds-p-around_medium" id="prompt-message-wrapper">
-        <p>There is someissue with the confiiuration or permissions please reach out to your org System Administrator</p>
-        <ul class="slds-list_dotted">
-            <li>- The current user does not have the right permission.</li>
-            <li>Check for open issue here..</li>
-            <li>List Item</li>
-        </ul>
-        </div>
-        <div class="slds-modal__footer slds-theme_default">
-        <!--button class="slds-button slds-button_neutral">Got It</button-->
-        </div>
-        </div>
-        </section>
-        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+            <section role="dialog" tabindex="0" aria-modal="true" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" class="slds-modal slds-fade-in-open slds-modal_prompt">
+                <div class="slds-modal__container">
+                    <div class="slds-modal__header slds-theme_error slds-theme_alert-texture">
+                        <h1 class="slds-text-heading_medium" id="prompt-heading-id">Service Unavailable</h1>
+                    </div>
+                    <div class="slds-modal__content slds-p-around_medium" id="prompt-message-wrapper">
+                        <p>There is some issue with the configuration or permissions. Please reach out to your org System Administrator.</p>
+                        <ul class="slds-list_dotted">
+                            <li>The current user does not have the right permission.</li>
+                        </ul>
+                    </div>
+                    <div class="slds-modal__footer slds-theme_default">
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
         </div>
     </template>
 </template>

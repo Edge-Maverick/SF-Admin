@@ -33,7 +33,9 @@
 /* --- 1. CIRCULAR PROGRESS RING (Completed from Reference) --- */
 .progress-ring-container {
     position: relative;
-    margin-left: auto;
+    margin: 0 auto;
+    width: 80px;
+    height: 80px;
 }
 /* This rotation makes the progress start at the top (12 o'clock) */
 .progress-ring { transform: rotate(-90deg);} 

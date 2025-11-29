@@ -1,48 +1,92 @@
 :host {
     padding: 0 !important;
-    margin:0 !important;
+    margin: 0 !important;
     background: transparent !important;
+    height: 100%;
+    display: block;
 }
-.org-horizon-main{
+
+.org-horizon-main {
     margin: 0;
     height: 100%;
     display: flex;
-    overflow: hidden; 
+    overflow: hidden;
+    background-color: #f3f2f2;
 }
 
 .navigation-container {
     background-color: white;
-    min-width: 205px;
-    border-radius: 1rem 0 0 1rem;
-    max-width: 205px;
-    overflow-y: auto;
-    padding-right: 8px;
-    margin-right: 0px;
-}
-.navigation-container > .navigation{
-    margin: 0;
-}
-
-.content-container{
-    margin-left: 0px;
-    padding: 10px;
-    flex: 1; 
-    overflow-y: auto;
-    background-color: rgba(245, 245, 245, 0.75) !important;
-    border-radius: 0 1rem 1rem 0;
+    min-width: 240px; /* Increased width for better readability */
+    max-width: 240px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #dddbda;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    z-index: 1;
 }
 
-.navigation-highlight{
-    margin: 0px;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    display:block;
-    border-width: 1px 0;
-    border-style: solid;
-    border-color: #bda295;
+.user-profile-section {
+    border-bottom: 1px solid #dddbda;
+    background-color: #faffff;
+}
+
+.greeting-container {
+    margin-bottom: 0.5rem;
+}
+
+.greeting-text {
+    color: #706e6b;
+    font-size: 0.875rem;
+    display: block;
+}
+
+.user-name {
+    color: #0176d3;
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: block;
+}
+
+.org-details-container {
+    background-color: white;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+}
+
+.org-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.org-label {
+    color: #706e6b;
+    margin-right: 0.5rem;
 }
 
 .quick-copy {
-    color: rgb(27, 86, 183);
-    font-style: italic;
+    color: #0176d3;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.quick-copy:hover {
+    text-decoration: underline;
+}
+
+.navigation {
+    flex: 1;
+    overflow-y: auto;
+    padding-top: 0.5rem;
+}
+
+.content-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    background-color: #f3f2f2;
 }

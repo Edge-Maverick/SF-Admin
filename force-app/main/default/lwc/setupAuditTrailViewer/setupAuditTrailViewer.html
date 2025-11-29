@@ -80,11 +80,11 @@
                                                             <td data-label="Display" class="slds-cell-wrap">
                                                                 <div title={log.Display}>{log.Display}</div>
                                                             </td>
-                                                            <td data-label="User">
-                                                                <div class="slds-truncate" title={log.CreatedByName}>{log.CreatedByName}</div>
+                                                            <td data-label="User" class="slds-cell-wrap">
+                                                                <div title={log.CreatedByName}>{log.CreatedByName}</div>
                                                             </td>
-                                                            <td data-label="Date">
-                                                                <div class="slds-truncate" title={log.CreatedDate}>
+                                                            <td data-label="Date" class="slds-cell-wrap">
+                                                                <div title={log.CreatedDate}>
                                                                     <lightning-formatted-date-time value={log.CreatedDate} year="numeric" month="numeric" day="numeric" hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
                                                                 </div>
                                                             </td>

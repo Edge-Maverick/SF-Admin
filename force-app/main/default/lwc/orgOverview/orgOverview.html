@@ -66,15 +66,17 @@
                 </template>
 
                 <template if:true={releaseInfo}>
-                    <div class="slds-var-m-top_medium slds-box slds-box_x-small slds-theme_shade">
+                    <div class="slds-var-m-top_medium slds-box slds-box_x-small slds-theme_shade release-banner">
                         <lightning-layout vertical-align="center">
                             <lightning-layout-item padding="around-small">
-                                <lightning-icon icon-name="custom:custom19" size="medium"></lightning-icon>
+                                <div class="release-icon-container">
+                                    <lightning-icon icon-name="custom:custom19" size="medium" variant="inverse"></lightning-icon>
+                                </div>
                             </lightning-layout-item>
                             <lightning-layout-item padding="around-small" flexibility="grow">
-                                <p class="slds-text-title_caps">Upcoming Release</p>
-                                <h3 class="slds-text-heading_small"><strong>{releaseInfo.name}</strong></h3>
-                                <p>Scheduled for: <lightning-formatted-date-time value={releaseInfo.releaseDate}></lightning-formatted-date-time></p>
+                                <p class="slds-text-title_caps release-title">Upcoming Release</p>
+                                <h3 class="slds-text-heading_small release-name"><strong>{releaseInfo.name}</strong></h3>
+                                <p class="release-date">Scheduled for: <lightning-formatted-date-time value={releaseInfo.releaseDate}></lightning-formatted-date-time></p>
                             </lightning-layout-item>
                             <lightning-layout-item padding="around-small">
                                 <div class="days-remaining-badge">
@@ -101,31 +103,31 @@
 
             <!-- Main Content (Always Visible) -->
             <div class="slds-box slds-theme_default main-summary-box">
-                <h2 class="slds-text-heading_small slds-var-m-bottom_small slds-border_bottom slds-var-p-bottom_x-small">
+                <h2 class="section-header slds-text-heading_small slds-var-m-bottom_small slds-border_bottom slds-var-p-bottom_x-small">
                     <lightning-icon icon-name="utility:chart" size="x-small" class="slds-var-m-right_x-small"></lightning-icon>
                     Quick Stats
                 </h2>
                 <lightning-layout multiple-rows>
                     <lightning-layout-item size="12" small-device-size="6" medium-device-size="3" padding="around-small">
-                        <div class="stat-item">
+                        <div class="stat-card">
                             <p class="stat-label">Limits Usage</p>
                             <p class="stat-value">78%</p>
                         </div>
                     </lightning-layout-item>
                     <lightning-layout-item size="12" small-device-size="6" medium-device-size="3" padding="around-small">
-                        <div class="stat-item">
+                        <div class="stat-card">
                             <p class="stat-label">Active Users</p>
                             <p class="stat-value">1,240</p>
                         </div>
                     </lightning-layout-item>
                     <lightning-layout-item size="12" small-device-size="6" medium-device-size="3" padding="around-small">
-                        <div class="stat-item">
+                        <div class="stat-card">
                             <p class="stat-label">Trust Status</p>
                             <p class="stat-value slds-text-color_success">OK</p>
                         </div>
                     </lightning-layout-item>
                     <lightning-layout-item size="12" small-device-size="6" medium-device-size="3" padding="around-small">
-                        <div class="stat-item">
+                        <div class="stat-card">
                             <p class="stat-label">Readiness</p>
                             <p class="stat-value">Good</p>
                         </div>
@@ -139,8 +141,8 @@
              </div>
 
             <!--  FOOTER FOR QUICK LAUNCH -->
-            <div class="slds-box slds-theme_default main-summary-box ">
-                <h2 class="slds-text-heading_small slds-var-m-bottom_small slds-border_bottom slds-var-p-bottom_x-small">
+            <div class="slds-box slds-theme_default main-summary-box slds-var-m-top_medium">
+                <h2 class="section-header slds-text-heading_small slds-var-m-bottom_small slds-border_bottom slds-var-p-bottom_x-small">
                     <lightning-icon icon-name="utility:link" size="x-small" class="slds-var-m-right_x-small"></lightning-icon>
                     Quick Launch
                 </h2>
@@ -148,32 +150,29 @@
                     <template if:true={quickLaunchItems}>
                         <template for:each={quickLaunchItems} for:item="item">
                             <lightning-layout-item key={item.Name} size="3" small-device-size="6" medium-device-size="3" large-device-size="2" padding="around-small">
-                                <div class="slds-visual-picker slds-visual-picker_small">
-                                    
-                                    <label for="visual-picker-94">
-                                        <span class="slds-visual-picker__figure slds-visual-picker__icon slds-align_absolute-center">
-                                        <span class="slds-is-selected">
-                                            <span class="slds-icon_container">
-                                            <svg class="slds-icon slds-icon_large slds-icon-action-check" aria-hidden="true">
-                                                <use xlink:href="/assets/icons/action-sprite/svg/symbols.svg#check"></use>
-                                            </svg>
+                                <div class="quick-launch-item">
+                                    <div class="slds-visual-picker slds-visual-picker_small">
+                                        <label for={item.Name}>
+                                            <span class="slds-visual-picker__figure slds-visual-picker__icon slds-align_absolute-center quick-launch-icon-container">
+                                                <span class="slds-is-selected">
+                                                    <span class="slds-icon_container">
+                                                        <svg class="slds-icon slds-icon_large slds-icon-action-check" aria-hidden="true">
+                                                            <use xlink:href="/assets/icons/action-sprite/svg/symbols.svg#check"></use>
+                                                        </svg>
+                                                    </span>
+                                                </span>
+                                                <span class="slds-is-not-selected">
+                                                    <span class="slds-icon_container">
+                                                        <lightning-icon icon-name={item.icon} size="large" class="quick-launch-icon"></lightning-icon>
+                                                    </span>
+                                                </span>
                                             </span>
-                                        </span>
-                                        <span class="slds-is-not-selected">
-                                            <span class="slds-icon_container">
-                                            <!--svg class="slds-icon slds-icon-standard-account slds-icon_large" aria-hidden="true">
-                                                <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"></use>
-                                            </svg-->
-                                            <lightning-icon icon-name={item.icon} size="large"></lightning-icon>
+                                            <span class="slds-visual-picker__body">
+                                                <span class="slds-text-title quick-launch-label">{item.label}</span>
                                             </span>
-                                        </span>
-                                        </span>
-                                        <span class="slds-visual-picker__body">
-                                        <span class="slds-text-title">{item.label}</span>
-                                        </span>
-                                    </label>
+                                        </label>
+                                    </div>
                                 </div>
-                            
                             </lightning-layout-item>
                         </template>
                     </template>
