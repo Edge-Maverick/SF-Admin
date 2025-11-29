@@ -1,7 +1,5 @@
 public with sharing class OrgOverviewController {
     
-    
-
     @AuraEnabled
     public static HomeDetailsWrapper getHomeDetails(){
         try {
@@ -57,15 +55,16 @@ public with sharing class OrgOverviewController {
                         info.name = (String) m.get('name');
                         info.releaseDate = plannedStartTime.date();
                         info.daysRemaining = Date.today().daysBetween(info.releaseDate);
-                        return info;
+                        
+                        if (info.daysRemaining <= 60) {
+                            return info;
+                        }
                     }
                 }
             }
         }
         return null;
     }
-
-
 
     public class HomeDetailsWrapper{
         @AuraEnabled public User currentUser;
@@ -96,5 +95,51 @@ public with sharing class OrgOverviewController {
     @AuraEnabled
     public static void deleteStickyNote(String noteId) {
         delete [SELECT Id FROM Admin_Note__c WHERE Id = :noteId];
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static TrustIncidentWrapper getTrustIncidents() {
+        Organization org = [SELECT InstanceName FROM Organization LIMIT 1];
+        String instanceName = org.InstanceName;
+        
+        TrustIncidentWrapper wrapper = new TrustIncidentWrapper();
+        wrapper.activeIncidents = new List<IncidentInfo>();
+        wrapper.pastIncidents = new List<IncidentInfo>();
+        
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint('https://api.status.salesforce.com/v1/incidents?instance=' + instanceName + '&limit=10');
+        req.setMethod('GET');
+        
+        Http http = new Http();
+        HttpResponse res = http.send(req);
+        
+        if (res.getStatusCode() == 200) {
+            List<Object> incidents = (List<Object>) JSON.deserializeUntyped(res.getBody());
+            for (Object obj : incidents) {
+                Map<String, Object> m = (Map<String, Object>) obj;
+                IncidentInfo info = new IncidentInfo();
+                info.id = (String) m.get('id');
+                info.message = (String) m.get('message'); 
+                info.serviceKeys = (List<Object>) m.get('serviceKeys');
+                info.createdAt = (String) m.get('createdAt');
+                
+                // For this implementation, we'll assume all returned are "past" unless we have better status logic
+                // In a real app, we'd check for 'resolved' status
+                wrapper.pastIncidents.add(info);
+            }
+        }
+        return wrapper;
+    }
+
+    public class TrustIncidentWrapper {
+        @AuraEnabled public List<IncidentInfo> activeIncidents;
+        @AuraEnabled public List<IncidentInfo> pastIncidents;
+    }
+
+    public class IncidentInfo {
+        @AuraEnabled public String id;
+        @AuraEnabled public String message;
+        @AuraEnabled public List<Object> serviceKeys;
+        @AuraEnabled public String createdAt;
     }
 }

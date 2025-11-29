@@ -1,12 +1,16 @@
 import { LightningElement, track, wire } from 'lwc';
 import getOrganizationDetails from '@salesforce/apex/OrgOverviewController.getOrganizationDetails';
 import getUpcomingRelease from '@salesforce/apex/OrgOverviewController.getUpcomingRelease';
+import getTrustIncidents from '@salesforce/apex/OrgOverviewController.getTrustIncidents';
 
 export default class OrgOverview extends LightningElement {
     @track isContentVisible = true; 
     @track orgDetails;
     @track error;
     @track releaseInfo;
+    @track isDrawerOpen = false;
+    @track activeIncidents;
+    @track pastIncidents;
     quickLaunchItems = [
         { label: 'Org Settings', icon: 'utility:settings', url: '/lightning/setup/SetupOneHome/home' },
         { label: 'Accounts', icon: 'utility:account', url: '/lightning/setup/OrgHealth/home' },
@@ -31,6 +35,16 @@ export default class OrgOverview extends LightningElement {
             this.releaseInfo = data;
         } else if (error) {
             console.error('Error fetching release info', error);
+        }
+    }
+
+    @wire(getTrustIncidents)
+    wiredTrustIncidents({ error, data }) {
+        if (data) {
+            this.activeIncidents = data.activeIncidents;
+            this.pastIncidents = data.pastIncidents;
+        } else if (error) {
+            console.error('Error fetching trust incidents', error);
         }
     }
 
@@ -62,10 +76,34 @@ export default class OrgOverview extends LightningElement {
         return this.orgDetails.IsSandbox ? 'slds-theme_warning' : 'slds-theme_success';
     }
 
+    get hasActiveIncidents() {
+        return this.activeIncidents && this.activeIncidents.length > 0;
+    }
+
+    get nextUpdateName() {
+        return this.releaseInfo ? this.releaseInfo.name : 'Unknown';
+    }
+
+    get nextUpdateDate() {
+        return this.releaseInfo ? this.releaseInfo.releaseDate : 'Unknown';
+    }
+
     /**
      * Toggles the visibility of the first div's content.
      */
     toggleContent() {
         this.isContentVisible = !this.isContentVisible;
+    }
+
+    handleDismissRelease() {
+        this.releaseInfo = null;
+    }
+
+    handleOpenDrawer() {
+        this.isDrawerOpen = true;
+    }
+
+    handleCloseDrawer() {
+        this.isDrawerOpen = false;
     }
 }
