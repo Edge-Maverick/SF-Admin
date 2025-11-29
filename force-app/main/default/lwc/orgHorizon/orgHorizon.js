@@ -70,4 +70,8 @@ export default class OrgHorizon extends LightningElement {
     get showLicenceUtilization(){
         return this.currentContent === 'licence_utilization';
     }
+
+    get showSetupAuditTrail(){
+        return this.currentContent === 'setup_audit';
+    }
 }
