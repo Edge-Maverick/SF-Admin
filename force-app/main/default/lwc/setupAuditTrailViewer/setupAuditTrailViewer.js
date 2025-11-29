@@ -10,6 +10,7 @@ export default class SetupAuditTrailViewer extends LightningElement {
     
     @track sectionOptions = [];
     @track selectedSection = 'All';
+    @track activeSections = [];
     
     rawLogs = []; // Store all logs to allow client-side filtering
 
@@ -111,6 +112,9 @@ export default class SetupAuditTrailViewer extends LightningElement {
                 items: groups[section]
             };
         });
+
+        // Open all sections by default
+        this.activeSections = this.groupedLogs.map(group => group.section);
     }
 
     get hasLogs() {

@@ -1,0 +1,48 @@
+.filter-container {
+    background-color: #f3f2f2;
+    border-radius: 0.25rem;
+    padding: 1rem;
+}
+
+.logs-container {
+    height: 600px; /* Fixed height for scrolling */
+    overflow-y: auto;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+    background-color: white;
+}
+
+/* Custom scrollbar for better look */
+.logs-container::-webkit-scrollbar {
+    width: 8px;
+}
+.logs-container::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+.logs-container::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 4px;
+}
+.logs-container::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+.section-count {
+    font-size: 0.8125rem;
+    color: #706e6b;
+    margin-left: 0.5rem;
+}
+
+/* Table styling */
+.slds-table thead th {
+    background-color: #fafaf9;
+    font-weight: 700;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.slds-accordion__section {
+    border-bottom: 1px solid #dddbda;
+}
