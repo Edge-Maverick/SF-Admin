@@ -16,8 +16,12 @@
                                     <span class="quick-copy slds-text-link_faux" onclick={copyTextAndNotify}>{currentOrgInfo.Id}</span>
                                     </li>
                                 <li>
-                                    <span class="slds-badge">Sandbox</span>
-                                    <span class="slds-badge">Production</span>
+                                    <template lwc:if={isProduction}>
+                                        <span class="slds-badge">Production</span>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="slds-badge">Sandbox</span>
+                                    </template>
                                 </li>
                             </ol>
                         </template>
@@ -36,13 +40,18 @@
                     <lightning-vertical-navigation-item label="Licence Utilization" name="licence_utilization"></lightning-vertical-navigation-item>
                     <lightning-vertical-navigation-item label="User Adoption" name="user_adoption"></lightning-vertical-navigation-item>
                     <lightning-vertical-navigation-item label="Login Forensics" name="login_forensics"></lightning-vertical-navigation-item>
-                    <lightning-vertical-navigation-item label="Setup Audit Trail" name="setup_audit"></lightning-vertical-navigation-item>
+                    <lightning-vertical-navigation-item label="Setup Audit Trail" name="setup_audit_trail"></lightning-vertical-navigation-item>
+                    <template lwc:if={isProduction}>
+                        <lightning-vertical-navigation-item-icon label="Sandbox" name="sandbox_overview" icon-name="utility:dx_org_test"></lightning-vertical-navigation-item-icon>
+                    </template>
                     <hr style="margin-top:5px; margin-bottom:10px"></hr>
                     <lightning-vertical-navigation-section label="Launch Pad">
-                        <lightning-vertical-navigation-item-icon label="Trust & Status" name="folders_shared" icon-name="utility:new_window"></lightning-vertical-navigation-item-icon>
-                        <lightning-vertical-navigation-item-icon label="Salesforce Go" name="folders_created" icon-name="utility:new_window"></lightning-vertical-navigation-item-icon>
-                        <lightning-vertical-navigation-item label="All Folders" name="folders_all"></lightning-vertical-navigation-item>
+                        <lightning-vertical-navigation-item-icon label="Help (package)" name="help" icon-name="utility:help_doc_ext"></lightning-vertical-navigation-item-icon>
+                        <lightning-vertical-navigation-item-icon label="Trust & Status" name="trust_status" icon-name="utility:world" href="https://trust.salesforce.com/"></lightning-vertical-navigation-item-icon>
+                        <lightning-vertical-navigation-item-icon label="Salesforce Go" name="folders_created" icon-name="utility:tour_check"></lightning-vertical-navigation-item-icon>
                     </lightning-vertical-navigation-section>
+                    <hr style="margin-top:5px; margin-bottom:10px"></hr>
+                    <lightning-vertical-navigation-item-icon label="Settings" name="settings" icon-name="utility:automate"></lightning-vertical-navigation-item-icon>
                 </lightning-vertical-navigation>
                 {currentContent}
                 </div>
@@ -51,11 +60,14 @@
                     <template lwc:if={showOrgOverview}>
                         <c-org-overview></c-org-overview>
                     </template>
-                    <template lwc:if={showLicenceUtilization}>
+                    <template lwc:elseif={showLicenceUtilization}>
                         <c-license-utilization></c-license-utilization>
                     </template>
-                    <template lwc:if={showSetupAuditTrail}>
+                    <template lwc:elseif={showSetupAuditTrail}>
                         <c-setup-audit-trail-viewer></c-setup-audit-trail-viewer>
+                    </template>
+                    <template lwc:else>
+                        Select a Proper Navigation option.
                     </template>
                     <!-- END :: MAIN CONTENT HOLDER -->
                 </div>

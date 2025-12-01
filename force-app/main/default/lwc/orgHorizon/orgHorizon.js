@@ -45,6 +45,11 @@ export default class OrgHorizon extends LightningElement {
         });
     }
 
+    get isProduction(){
+        return true;
+        //return (this.currentOrgInfo && this.currentOrgInfo.IsSandbox === false); //TODO: to remove the initial true value. added for building..
+    }
+
     get userName(){
         return this.currentUser ? this.currentUser.FirstName : 'Admin';
     }
@@ -71,6 +76,6 @@ export default class OrgHorizon extends LightningElement {
         return this.currentContent === 'licence_utilization';
     }
     get showSetupAuditTrail(){
-        return this.currentContent === 'setup_audit';
+        return this.currentContent === 'setup_audit_trail';
     }
 }

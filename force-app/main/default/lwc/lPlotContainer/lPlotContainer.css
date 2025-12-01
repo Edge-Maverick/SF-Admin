@@ -19,10 +19,11 @@ body {
     flex-direction: column;
 }
 
-.plot-card:hover {
-    transform: translateY(-5px); /* Add a subtle lift effect on hover */
+/* Add a subtle lift effect on hover */
+/*.plot-card:hover {
+    transform: translateY(-5px); 
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
-}
+}*/
 
 .plot-card-header {
     display: flex;
