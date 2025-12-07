@@ -10,14 +10,19 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>UserLicence</fullName>
+                <fullName>UserLicense</fullName>
                 <default>false</default>
-                <label>UserLicence</label>
+                <label>UserLicense</label>
             </value>
             <value>
                 <fullName>User</fullName>
                 <default>false</default>
                 <label>User</label>
+            </value>
+            <value>
+                <fullName>PermissionSetLicense</fullName>
+                <default>false</default>
+                <label>PermissionSetLicense</label>
             </value>
         </valueSetDefinition>
     </valueSet>

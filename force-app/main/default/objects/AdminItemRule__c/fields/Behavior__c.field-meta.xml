@@ -11,9 +11,9 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>AlwaysShow</fullName>
-                <default>false</default>
-                <label>AlwaysShow</label>
+                <fullName>InActive</fullName>
+                <default>true</default>
+                <label>InActive</label>
             </value>
             <value>
                 <fullName>DoNotShow</fullName>
@@ -21,9 +21,14 @@
                 <label>DoNotShow</label>
             </value>
             <value>
-                <fullName>AlwaysShow-Critical</fullName>
+                <fullName>Critical</fullName>
                 <default>false</default>
-                <label>AlwaysShow-Critical</label>
+                <label>Critical</label>
+            </value>
+            <value>
+                <fullName>AlwaysShow</fullName>
+                <default>false</default>
+                <label>AlwaysShow</label>
             </value>
         </valueSetDefinition>
     </valueSet>
