@@ -1,48 +1,134 @@
-.filter-container {
-    background-color: #f3f2f2;
-    border-radius: 0.25rem;
+/* Main container */
+.main-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     padding: 1rem;
+    background-color: transparent;
 }
 
-.logs-container {
-    height: 600px; /* Fixed height for scrolling */
-    overflow-y: auto;
-    border: 1px solid #dddbda;
-    border-radius: 0.25rem;
+/* Header & Filter Tray (Shared from previous step, tweaked for cards) */
+.header-section {
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.filter-tray {
     background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* Custom scrollbar for better look */
-.logs-container::-webkit-scrollbar {
-    width: 8px;
+/* Scroll area */
+.logs-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.25rem;
 }
-.logs-container::-webkit-scrollbar-track {
-    background: #f1f1f1; 
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
 }
-.logs-container::-webkit-scrollbar-thumb {
-    background: #888; 
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent; 
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #dddbda; 
     border-radius: 4px;
 }
-.logs-container::-webkit-scrollbar-thumb:hover {
-    background: #555; 
+
+/* Card Wrapper for Accordion Sections */
+.section-card {
+    background: white;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    border: 1px solid #dddbda;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: all 0.2s ease;
 }
 
-.section-count {
-    font-size: 0.8125rem;
-    color: #706e6b;
-    margin-left: 0.5rem;
+.section-card:hover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
 }
 
-/* Table styling */
+/* Critical Section Highlight */
+.section-card.critical-section {
+    border-color: #f5b1ad; /* Red-30 */
+    border-left: 4px solid #ea001e; /* Red-50 */
+}
+
+/* Critical Badge in Header */
+.critical-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: #ea001e;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Inner Table Styling */
+.inner-table-container {
+    padding: 0;
+}
+
+.slds-table {
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+}
+
 .slds-table thead th {
     background-color: #fafaf9;
     font-weight: 700;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
 }
 
-.slds-accordion__section {
-    border-bottom: 1px solid #dddbda;
+/* Action Cell Styling */
+.action-cell {
+    font-weight: 600;
+    color: #080707;
+}
+
+/* Critical Row Highlight */
+.critical-row {
+    background-color: #fef1f3; /* Very light red */
+}
+.critical-row:hover > td {
+    background-color: #fceceb !important; /* Slightly darker on hover */
+}
+
+.critical-row .action-cell {
+    color: #ba0517; /* Dark Red text */
+}
+
+/* Skeleton Skeleton */
+.skeleton-card {
+    height: 60px;
+    background-color: #f3f3f3;
+    border-radius: 4px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+/* Empty State */
+.empty-illustration img {
+    height: 150px;
+    width: auto;
+    opacity: 0.8;
 }

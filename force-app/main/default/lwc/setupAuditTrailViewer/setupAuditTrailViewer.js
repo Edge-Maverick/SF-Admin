@@ -11,8 +11,13 @@ export default class SetupAuditTrailViewer extends LightningElement {
     @track sectionOptions = [];
     @track selectedSection = 'All';
     @track activeSections = [];
+    @track showCriticalOnly = false;
     
-    rawLogs = []; // Store all logs to allow client-side filtering
+    rawLogs = []; 
+
+    get skeletonItems() {
+        return [1, 2, 3]; // Fewer items for groups
+    }
 
     connectedCallback() {
         // Default to last 7 days
@@ -39,7 +44,12 @@ export default class SetupAuditTrailViewer extends LightningElement {
         this.filterLogs();
     }
 
-    handleFilter() {
+    handleCriticalChange(event) {
+        this.showCriticalOnly = event.target.checked;
+        this.filterLogs();
+    }
+
+    handleRefresh() {
         this.fetchLogs();
     }
 
@@ -58,7 +68,9 @@ export default class SetupAuditTrailViewer extends LightningElement {
             .then(result => {
                 this.rawLogs = result || [];
                 this.processLogs();
-                this.isLoading = false;
+                setTimeout(() => {
+                    this.isLoading = false;
+                }, 400);
             })
             .catch(error => {
                 this.error = error.body ? error.body.message : error.message;
@@ -74,13 +86,11 @@ export default class SetupAuditTrailViewer extends LightningElement {
             return;
         }
 
-        // Extract unique sections
         const sections = new Set();
         this.rawLogs.forEach(log => {
             sections.add(log.Section || 'Other');
         });
 
-        // Build options
         const options = [{ label: 'All Sections', value: 'All' }];
         Array.from(sections).sort().forEach(section => {
             options.push({ label: section, value: section });
@@ -94,9 +104,13 @@ export default class SetupAuditTrailViewer extends LightningElement {
         const groups = {};
         
         this.rawLogs.forEach(log => {
+            // Level 1: Filter by Critical Toggle
+            if (this.showCriticalOnly && !this.isCritical(log.Action)) {
+                return; // Skip non-critical if toggle is on
+            }
+
+            // Level 2: Filter by Section
             const section = log.Section || 'Other';
-            
-            // Filter based on selection
             if (this.selectedSection === 'All' || this.selectedSection === section) {
                 if (!groups[section]) {
                     groups[section] = [];
@@ -105,16 +119,62 @@ export default class SetupAuditTrailViewer extends LightningElement {
             }
         });
 
-        // Convert to array and sort by section name
-        this.groupedLogs = Object.keys(groups).sort().map(section => {
+        this.groupedLogs = Object.keys(groups).map(section => {
+            const items = groups[section].map(log => ({
+                ...log,
+                formattedDate: this.formatDate(new Date(log.CreatedDate)),
+                rowClass: this.getRowClass(log.Action)
+            }));
+            
+            const totalCount = items.length;
+            const criticalCount = items.filter(i => this.isCritical(i.Action)).length;
+            const hasCritical = criticalCount > 0;
+            
             return {
                 section: section,
-                items: groups[section]
+                items: items,
+                totalCount: totalCount,
+                criticalCount: criticalCount,
+                hasCritical: hasCritical,
+                badgeClass: hasCritical ? 'slds-badge slds-theme_error' : 'slds-badge slds-theme_light',
+                iconName: hasCritical ? 'utility:warning' : 'utility:list',
+                iconVariant: hasCritical ? 'error' : '',
+                wrapperClass: `section-card ${hasCritical ? 'critical-section' : ''}`
             };
         });
 
-        // Open all sections by default
-        this.activeSections = this.groupedLogs.map(group => group.section);
+        // Smart Sort
+        this.groupedLogs.sort((a, b) => {
+            if (a.hasCritical && !b.hasCritical) return -1;
+            if (!a.hasCritical && b.hasCritical) return 1;
+            return a.section.localeCompare(b.section);
+        });
+
+        // Open active sections
+        this.activeSections = this.groupedLogs
+            .filter(g => g.hasCritical)
+            .map(g => g.section);
+         
+         if (this.activeSections.length === 0 && this.groupedLogs.length > 0) {
+             this.activeSections = [this.groupedLogs[0].section];
+         }
+    }
+
+    formatDate(date) {
+        return date.toLocaleString([], { 
+            month: 'short', day: 'numeric', 
+            hour: '2-digit', minute: '2-digit' 
+        });
+    }
+
+    isCritical(action) {
+        if (!action) return false;
+        const lower = action.toLowerCase();
+        return lower.includes('delete') || lower.includes('remove') || lower.includes('failed') || lower.includes('expire');
+    }
+
+    getRowClass(action) {
+        return this.isCritical(action) ? 'critical-row' : '';
     }
 
     get hasLogs() {
