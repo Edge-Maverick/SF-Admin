@@ -1,4 +1,5 @@
 public with sharing class OrgOverviewController {
+    // Controller for Organization Overview LWC
     
     @AuraEnabled
     public static HomeDetailsWrapper getHomeDetails(){
@@ -255,6 +256,56 @@ public with sharing class OrgOverviewController {
         } catch (Exception e) {
             System.debug('Error calculating API Version: ' + e.getMessage());
             return 'Unknown';
+        }
+    }
+
+    // --- API Version Helpers ---
+    @AuraEnabled
+    public static Decimal getCurrentApiVersion() {
+        // Query the highest API version currently in use/available via ApexClass
+        // This is a proxy for the org's latest supported version
+        // Fallback to a safe default if query fails (unlikely)
+         List<ApexClass> classes = [SELECT ApiVersion FROM ApexClass ORDER BY ApiVersion DESC LIMIT 1];
+         if (!classes.isEmpty()) {
+             return classes[0].ApiVersion;
+         }
+         return 62.0; // Fallback
+    }
+
+    public static Decimal getApiVersionAtDate(Date d) {
+        if (d == null) return getCurrentApiVersion();
+        
+        Integer year = d.year();
+        Integer month = d.month();
+        
+        String season;
+        Integer releaseYear = year;
+
+        // Approximate Release Cycles:
+        // Spring: Feb (Month 2)
+        // Summer: Jun (Month 6)
+        // Winter: Oct (Month 10) - named for next year usually
+        
+        if (month < 2) {
+             // Jan -> Previous Winter (Winter 'Year)
+             // Release Name is Winter 'Year
+             season = 'Winter';
+        } else if (month >= 2 && month < 6) {
+            season = 'Spring';
+        } else if (month >= 6 && month < 10) {
+            season = 'Summer';
+        } else {
+             // Oct/Nov/Dec -> Winter 'Year+1
+             season = 'Winter';
+             releaseYear++;
+        }
+        
+        // Use existing calculation logic
+        String versionStr = calculateApiVersion(season + ' \'' + String.valueOf(releaseYear).right(2));
+        try {
+            return Decimal.valueOf(versionStr);
+        } catch(Exception e) {
+            return 60.0;
         }
     }
 

@@ -80,6 +80,7 @@
                     <lightning-vertical-navigation-item label="Login Forensics" name="login_forensics"></lightning-vertical-navigation-item>
                     <lightning-vertical-navigation-item label="Setup Audit Trail" name="setup_audit_trail"></lightning-vertical-navigation-item>
                     <lightning-vertical-navigation-item-icon label="Technical Health" name="techincal_health" icon-name="utility:heart"></lightning-vertical-navigation-item-icon>
+                    <lightning-vertical-navigation-item-icon label="Optimizer" name="optimizer" icon-name="utility:strategy"></lightning-vertical-navigation-item-icon>
                     <template lwc:if={isProduction}>
                         <lightning-vertical-navigation-item-icon label="Sandbox" name="sandbox_overview" icon-name="utility:dx_org_test"></lightning-vertical-navigation-item-icon>
                     </template>
@@ -108,6 +109,9 @@
                     </template>
                     <template lwc:elseif={showTechincalHealth}>
                         <c-techincal-health></c-techincal-health>
+                    </template>
+                    <template lwc:elseif={showOptimizer}>
+                        <c-optimizer></c-optimizer>
                     </template>
                     <template lwc:else>
                         Select a Proper Navigation option.

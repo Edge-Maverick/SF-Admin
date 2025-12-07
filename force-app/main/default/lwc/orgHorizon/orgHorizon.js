@@ -172,4 +172,7 @@ export default class OrgHorizon extends LightningElement {
     get showTechincalHealth(){
         return this.currentContent === 'techincal_health';
     }
+    get showOptimizer(){
+        return this.currentContent === 'optimizer';
+    }
 }

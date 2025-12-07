@@ -1,0 +1,225 @@
+<template>
+    <div class="slds-card slds-var-p-around_medium">
+        <!-- Header -->
+        <header class="slds-media slds-media_center slds-has-flexi-truncate slds-var-m-bottom_medium">
+            <div class="slds-media__figure">
+                <div class="slds-icon_container slds-icon-standard-opportunity">
+                     <lightning-icon icon-name="utility:strategy" size="medium" alternative-text="Optimizer" class="slds-icon slds-icon_medium"></lightning-icon>
+                </div>
+            </div>
+            <div class="slds-media__body">
+                <h2 class="slds-text-heading_medium slds-truncate">
+                    Salesforce Optimizer
+                </h2>
+                <p class="slds-text-body_regular slds-text-color_weak">Technical Debt & Health Check Scanner</p>
+            </div>
+            <div class="slds-no-flex">
+                 <template if:true={hasResults}>
+                     <span class="slds-text-body_small slds-var-m-right_small">Last Scanned: <strong>{lastScannedDate}</strong></span>
+                 </template>
+                 <lightning-button label={scanButtonLabel} icon-name="utility:refresh" onclick={handleScan} variant="neutral" disabled={isScanning}></lightning-button>
+            </div>
+        </header>
+        
+        <!-- Intro / Body -->
+        <template if:false={hasResults}>
+             <template if:false={isScanning}>
+                <div class="slds-align_absolute-center slds-var-p-around_large slds-text-align_center">
+                    <div>
+                        <img src="https://www.lightningdesignsystem.com/assets/images/placeholder-img@16x9.jpg" style="max-width:300px; border-radius:8px; display:none;" alt="Placeholder (Replace with asset)"/>
+                        <h3 class="slds-text-heading_small slds-var-m-top_medium">Identify Optimization Opportunities</h3>
+                        <p class="slds-text-body_regular slds-var-m-vertical_small" style="max-width:500px">
+                            Scan your organization for unused metadata, inactive users, and potential security risks. 
+                            Regular scanning keeps your org healthy and performant.
+                        </p>
+                        <lightning-button label="Start Scan" variant="brand" onclick={handleScan} size="medium"></lightning-button>
+                    </div>
+                </div>
+             </template>
+        </template>
+
+        <!-- Loading State -->
+         <div if:true={isScanning} class="slds-var-p-around_large">
+             <div class="slds-align_absolute-center slds-is-relative" style="height: 200px;">
+                <lightning-spinner alternative-text="Scanning..." size="large" variant="brand"></lightning-spinner>
+                <div class="slds-var-m-top_xx-large slds-text-heading_small slds-text-color_weak">Analyzing Org Metadata...</div>
+             </div>
+         </div>
+
+        <!-- Results Grid -->
+        <template if:true={hasResults}>
+            <template if:false={isScanning}>
+                <div class="slds-grid slds-wrap slds-gutters">
+                    
+                    <!-- Row 1 -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-var-m-bottom_medium">
+                        <div class={unusedProfilesClass} onclick={handleCardClick} data-metric="unusedProfiles" role="button" tabindex="0">
+                            <div class="card-header">
+                                <span class="card-title">Unused Profiles</span>
+                                <lightning-icon icon-name="utility:people" size="x-small"></lightning-icon>
+                            </div>
+                            <div class="card-body">
+                                <span class="count-circle">{unusedProfilesCount}</span>
+                                <p class="slds-text-body_small slds-text-color_weak slds-var-m-top_small">Click to view details</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-var-m-bottom_medium">
+                         <div class={unusedPermSetsClass} onclick={handleCardClick} data-metric="unusedPermSets" role="button" tabindex="0">
+                            <div class="card-header">
+                                <span class="card-title">Unused Perm Sets</span>
+                                <lightning-icon icon-name="utility:unlock" size="x-small"></lightning-icon>
+                            </div>
+                            <div class="card-body">
+                                <span class="count-circle">{unusedPermSetsCount}</span>
+                                <p class="slds-text-body_small slds-text-color_weak slds-var-m-top_small">Click to view details</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-var-m-bottom_medium">
+                        <div class={privilegedUsersClass} onclick={handleCardClick} data-metric="privilegedUsers" role="button" tabindex="0">
+                            <div class="card-header">
+                                <span class="card-title">Privileged Users</span>
+                                <lightning-icon icon-name="utility:shield" size="x-small"></lightning-icon>
+                            </div>
+                            <div class="card-body">
+                                <span class="count-circle">{privilegedUsersCount}</span>
+                                <p class="slds-text-body_small slds-text-color_weak slds-var-m-top_small">Click to view details</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-var-m-bottom_medium">
+                         <div class={hardCodedUrlsClass} onclick={handleCardClick} data-metric="hardCodedUrls" role="button" tabindex="0">
+                            <div class="card-header">
+                                <span class="card-title">Hard-coded URLs</span>
+                                <lightning-icon icon-name="utility:link" size="x-small"></lightning-icon>
+                            </div>
+                            <div class="card-body">
+                                <span class="count-circle">{hardCodedUrlsCount}</span>
+                                <p class="slds-text-body_small slds-text-color_weak slds-var-m-top_small">Click to view details</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2 -->
+                     <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-var-m-bottom_medium">
+                        <div class={unassignedRolesClass} onclick={handleCardClick} data-metric="unassignedRoles" role="button" tabindex="0">
+                            <div class="card-header">
+                                <span class="card-title">Unassigned Roles</span>
+                                <lightning-icon icon-name="utility:hierarchy" size="x-small"></lightning-icon>
+                            </div>
+                            <div class="card-body">
+                                <span class="count-circle">{unassignedRolesCount}</span>
+                                <p class="slds-text-body_small slds-text-color_weak slds-var-m-top_small">Click to view details</p>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-var-m-bottom_medium">
+                        <div class={neverLoggedInUsersClass} onclick={handleCardClick} data-metric="neverLoggedInUsers" role="button" tabindex="0">
+                            <div class="card-header">
+                                <span class="card-title">Inactive Users</span>
+                                <lightning-icon icon-name="utility:user" size="x-small"></lightning-icon>
+                            </div>
+                            <div class="card-body">
+                                <span class="count-circle">{neverLoggedInUsersCount}</span>
+                                <p class="slds-text-body_small slds-text-color_weak slds-var-m-top_small">Click to view details</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-var-m-bottom_medium">
+                        <div class={staleReportsClass} onclick={handleCardClick} data-metric="staleReports" role="button" tabindex="0">
+                            <div class="card-header">
+                                <span class="card-title">Stale Reports</span>
+                                <lightning-icon icon-name="utility:report" size="x-small"></lightning-icon>
+                            </div>
+                            <div class="card-body">
+                                <span class="count-circle">{staleReportsCount}</span>
+                                <p class="slds-text-body_small slds-text-color_weak slds-var-m-top_small">Click to view details</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-var-m-bottom_medium">
+                         <div class={emptyPublicGroupsClass} onclick={handleCardClick} data-metric="emptyPublicGroups" role="button" tabindex="0">
+                            <div class="card-header">
+                                <span class="card-title">Empty Groups</span>
+                                <lightning-icon icon-name="utility:groups" size="x-small"></lightning-icon>
+                            </div>
+                            <div class="card-body">
+                                <span class="count-circle">{emptyPublicGroupsCount}</span>
+                                <p class="slds-text-body_small slds-text-color_weak slds-var-m-top_small">Click to view details</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3 (Advanced) -->
+                     <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-var-m-bottom_medium">
+                        <div class={oldApiClassesClass} onclick={handleCardClick} data-metric="oldApiClasses" role="button" tabindex="0">
+                            <div class="card-header">
+                                <span class="card-title">Old API Versions</span>
+                                <lightning-icon icon-name="utility:apex" size="x-small"></lightning-icon>
+                            </div>
+                            <div class="card-body">
+                                <span class="count-circle">{oldApiClassesCount}</span>
+                                <p class="slds-text-body_small slds-text-color_weak slds-var-m-top_small">Click to view details</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-var-m-bottom_medium">
+                        <div class={activeProcessBuildersClass} onclick={handleCardClick} data-metric="activeProcessBuilders" role="button" tabindex="0">
+                            <div class="card-header">
+                                <span class="card-title">Active Process Builders</span>
+                                <lightning-icon icon-name="utility:flow" size="x-small"></lightning-icon>
+                            </div>
+                            <div class="card-body">
+                                <span class="count-circle">{activeProcessBuildersCount}</span>
+                                <p class="slds-text-body_small slds-text-color_weak slds-var-m-top_small">Click to view details</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </template>
+        </template>
+        
+        <template if:true={error}>
+            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error slds-var-m-top_medium" role="alert">
+                <h2>Scan failed: {error.body.message}</h2>
+            </div>
+        </template>
+
+        <!-- Detail Modal -->
+        <template if:true={isModalOpen}>
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium" aria-modal="true">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 class="slds-text-heading_medium slds-hyphenate">{modalTitle}</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <lightning-datatable
+                            key-field="id"
+                            data={modalData}
+                            columns={modalColumns}
+                            hide-checkbox-column
+                            onrowaction={handleRowAction}>
+                        </lightning-datatable>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" onclick={closeModal}>Close</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+    </div>
+</template>
