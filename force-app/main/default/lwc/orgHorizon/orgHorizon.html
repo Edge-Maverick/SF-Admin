@@ -7,29 +7,68 @@
                     <div class="padding:0;margin:0;"><strong class="" style="color:#bc876d;font-size:5px;padding:0;margin:0;">ADMIN101.ADMIN101.ADMIN101.ADMIN101.ADMIN101.ADMIN101</strong></div-->
                     <div class="navigation-highlight">
                         <template lwc:if={currentOrgInfo}>
-                            <ol>
-                                <li class="quick-copy">
-                                    <span class="slds-text-link_faux">{currentOrgInfo.Name}</span>
-                                </li>
-                                <li class="quick-copy">
-                                    <span class="slds-text-link_faux">{maskedOrgId}</span>
-                                    <lightning-button-icon icon-name="utility:copy" size="medium" onclick={copyOrgId} class="slds-float_right" variant="bare"></lightning-button-icon>
-                                </li>
-                                <li>
-                                    <template lwc:if={isProduction}>
-                                        <span class="slds-badge">Production</span>
-                                    </template>
-                                    <template lwc:else>
-                                        <span class="slds-badge">Sandbox</span>
-                                    </template>
-                                </li>
-                            </ol>
+                            <div class={cardClass}>
+                                <div class={innerClass} onclick={handleCardClick}>
+                                    <!-- FRONT FACE -->
+                                    <div class="card-front">
+                                        <div class="card-glow"></div>
+                                        <div class="card-content">
+                                            <div class="card-top">
+                                                <div class="header-group">
+                                                    <div class="release-info">
+                                                        <div class="current-release">{currentReleaseVersion}</div>
+                                                        <template lwc:if={nextReleaseDays}>
+                                                            <div class="upcoming-release">
+                                                                <span class="days-count">{nextReleaseDays} Days</span> to {nextReleaseName}
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="org-name-section slds-truncate" title={currentOrgInfo.Name}>
+                                                {currentOrgInfo.Name}
+                                            </div>
+
+                                            <div class="org-id-row slds-grid slds-grid_vertical-align-center">
+                                                <span class="org-id-mono">{orgId}</span>
+                                                <lightning-button-icon icon-name="utility:copy" size="xx-small" onclick={copyOrgId} variant="bare" class="copy-btn"></lightning-button-icon>
+                                            </div>
+
+                                            <div class="card-bottom">
+                                                <div class="status-group slds-grid slds-grid_vertical-align-center">
+                                                    <template lwc:if={isProduction}>
+                                                        <span class="holo-sticker production">PROD</span>
+                                                    </template>
+                                                    <template lwc:else>
+                                                        <span class="holo-sticker sandbox">SANDBOX</span>
+                                                    </template>
+                                                    <span class={pulseClass}></span>
+                                                </div>
+                                                <div class="qr-code"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- BACK FACE -->
+                                    <div class="card-back">
+                                        <div class="card-content slds-text-align_center slds-grid slds-grid_vertical slds-grid_align-center">
+                                            <h3 class="back-title">ORG DETAILS</h3>
+                                            <p class="back-label">API VER</p>
+                                            <p class="back-value">{apiVersion}</p>
+                                            
+                                            <div class="slds-var-m-top_small">
+                                                <button class="slds-button slds-button_neutral switch-btn">Switch Org</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </template>
                         <template lwc:else>
-                            <lightning-dynamic-icon 
-                                type="ellie" 
-                                alternative-text="Loading..">
-                            </lightning-dynamic-icon>
+                            <div class="slds-align_absolute-center slds-p-vertical_small">
+                                <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+                            </div>
                         </template>
                     </div>
                 </div>

@@ -236,3 +236,86 @@
     font-size: 0.9375rem;
     color: #080707;
 }
+
+
+/* --- Dashboard Tiles --- */
+.dashboard-tile {
+    background: white;
+    border: 1px solid #dddbda;
+    border-radius: 8px;
+    padding: 1rem;
+    height: 100%;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+}
+
+.dashboard-tile:hover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.tile-header {
+    border-bottom: 1px solid #f3f3f3;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.tile-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #696969;
+    letter-spacing: 0.05em;
+}
+
+/* Tile Accents */
+.identity-tile { border-left: 4px solid #00a1e0; } /* Blue */
+.health-tile { border-left: 4px solid #04844b; } /* Green */
+.limits-tile { border-left: 4px solid #ff9a3c; } /* Orange */
+
+/* Identity Tile Content */
+.org-name-dash {
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: #080707;
+}
+
+.org-id-dash {
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 0.85rem;
+    color: #696969;
+}
+
+/* Health Tile Content */
+.health-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.health-status.green { color: #04844b; }
+.health-status.red { color: #ea001e; }
+
+.health-text {
+    margin-top: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Limits Tile Content */
+.limit-label {
+    font-size: 0.75rem;
+    color: #696969;
+}
+
+.limit-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #080707;
+}
+
+.ring-container {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+}
