@@ -16,23 +16,39 @@
                         <p class="slds-text-body_small">Track recent setup changes</p>
                     </div>
                 </div>
-                <div class="actions">
+                <div class="actions slds-grid slds-grid_vertical-align-center">
+                    <!-- Filter Toggle Button -->
+                    <lightning-button-icon 
+                        icon-name="utility:filterList" 
+                        variant={filterButtonVariant}
+                        alternative-text="Toggle Filters" 
+                        title="Toggle Filters"
+                        onclick={toggleFilterDrawer}
+                        class="slds-var-m-right_x-small">
+                    </lightning-button-icon>
                     <lightning-button-icon icon-name="utility:refresh" onclick={handleRefresh} variant="border-filled"></lightning-button-icon>
                 </div>
             </div>
         </div>
 
-        <!-- Filter Tray -->
-        <div class="filter-tray slds-var-m-bottom_medium">
+        <!-- Filter Drawer (Collapsible) -->
+        <div class={filterDrawerClass}>
             <div class="slds-grid slds-gutters_small">
-                <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-12">
-                     <lightning-input type="date" label="Start Date" value={startDate} onchange={handleStartDateChange} variant="label-stacked"></lightning-input>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12">
+                    <div class="slds-form-element">
+                        <div class="slds-grid slds-gutters_small">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input type="date" label="Start Date" value={startDate} onchange={handleStartDateChange} variant="label-stacked"></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input type="date" label="End Date" value={endDate} onchange={handleEndDateChange} variant="label-stacked"></lightning-input>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-12">
-                    <lightning-input type="date" label="End Date" value={endDate} onchange={handleEndDateChange} variant="label-stacked"></lightning-input>
-                </div>
+                
                 <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
-                    <lightning-combobox
+                     <lightning-combobox
                         name="sectionFilter"
                         label="Filter by Section"
                         value={selectedSection}
@@ -46,8 +62,8 @@
                 <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12 slds-align-bottom">
                      <lightning-input type="toggle" label="Critical Only" checked={showCriticalOnly} onchange={handleCriticalChange} message-toggle-active="" message-toggle-inactive="" variant="label-stacked"></lightning-input>
                 </div>
-                </div>
             </div>
+        </div>
 
         <!-- Loading State -->
         <template lwc:if={isLoading}>
@@ -134,6 +150,8 @@
                 <div class="empty-state slds-text-align_center slds-var-p-vertical_large">
                     <img src="/img/chatter/Desert.svg" alt="No records found" style="height:150px"/>
                     <h3 class="slds-text-heading_medium slds-var-m-top_medium">No Logs Found</h3>
+                    <p class="slds-text-body_regular slds-var-m-bottom_medium slds-text-color_weak">Try adjusting your filters or date range.</p>
+                    <lightning-button label="Clear Filters" onclick={handleClearFilters} variant="neutral"></lightning-button>
                 </div>
             </template>
         </template>

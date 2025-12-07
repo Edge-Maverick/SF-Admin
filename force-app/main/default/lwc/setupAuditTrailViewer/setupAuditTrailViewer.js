@@ -12,6 +12,7 @@ export default class SetupAuditTrailViewer extends LightningElement {
     @track selectedSection = 'All';
     @track activeSections = [];
     @track showCriticalOnly = false;
+    @track isFilterOpen = true; // Default open for visibility
     
     rawLogs = []; 
 
@@ -19,16 +20,31 @@ export default class SetupAuditTrailViewer extends LightningElement {
         return [1, 2, 3]; // Fewer items for groups
     }
 
+    get filterDrawerClass() {
+        return `filter-drawer ${this.isFilterOpen ? 'drawer-open' : 'drawer-closed'} slds-var-m-bottom_medium`;
+    }
+
+    get filterButtonVariant() {
+        return this.isFilterOpen ? 'brand' : 'border-filled';
+    }
+
     connectedCallback() {
         // Default to last 7 days
+        this.setDateRange(7);
+        this.fetchLogs();
+    }
+
+    setDateRange(days) {
         const end = new Date();
         const start = new Date();
-        start.setDate(end.getDate() - 7);
+        if (days === '24h') {
+             start.setDate(end.getDate() - 1); // Exact 24h logic could be precise, but day-based is usually fine for audit logs
+        } else {
+             start.setDate(end.getDate() - days);
+        }
         
         this.endDate = end.toISOString().slice(0, 10);
         this.startDate = start.toISOString().slice(0, 10);
-
-        this.fetchLogs();
     }
 
     handleStartDateChange(event) {
@@ -37,6 +53,12 @@ export default class SetupAuditTrailViewer extends LightningElement {
 
     handleEndDateChange(event) {
         this.endDate = event.target.value;
+    }
+
+
+
+    toggleFilterDrawer() {
+        this.isFilterOpen = !this.isFilterOpen;
     }
 
     handleSectionChange(event) {
@@ -50,6 +72,13 @@ export default class SetupAuditTrailViewer extends LightningElement {
     }
 
     handleRefresh() {
+        this.fetchLogs();
+    }
+
+    handleClearFilters() {
+        this.selectedSection = 'All';
+        this.showCriticalOnly = false;
+        this.setDateRange(7); // Reset to default 7 days
         this.fetchLogs();
     }
 
@@ -166,6 +195,8 @@ export default class SetupAuditTrailViewer extends LightningElement {
             hour: '2-digit', minute: '2-digit' 
         });
     }
+
+
 
     isCritical(action) {
         if (!action) return false;

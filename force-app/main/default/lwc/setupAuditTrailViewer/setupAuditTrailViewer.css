@@ -7,18 +7,38 @@
     background-color: transparent;
 }
 
-/* Header & Filter Tray (Shared from previous step, tweaked for cards) */
+/* Header & Filter Drawer */
 .header-section {
     padding-bottom: 0.5rem;
     border-bottom: 1px solid #e5e5e5;
 }
 
-.filter-tray {
+/* Drawer Animation */
+.filter-drawer {
     background-color: white;
-    padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 100; /* Ensure it sits on top of data */
 }
+
+.drawer-closed {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden; /* Clip while closed/closing */
+    margin-bottom: 0 !important;
+    padding: 0 1rem;
+}
+
+.drawer-open {
+    max-height: 500px; /* Large max-height to accommodate dropdowns */
+    opacity: 1;
+    overflow: visible; /* Allow dropdowns to spill out */
+    padding: 1rem;
+}
+
+
 
 /* Scroll area */
 .logs-container {
@@ -100,6 +120,8 @@
     color: #080707;
 }
 
+
+
 /* Critical Row Highlight */
 .critical-row {
     background-color: #fef1f3; /* Very light red */
@@ -114,7 +136,7 @@
 
 /* Skeleton Skeleton */
 .skeleton-card {
-    height: 60px;
+    height: 48px; /* Match closed accordion height approx */
     background-color: #f3f3f3;
     border-radius: 4px;
     animation: pulse 1.5s infinite ease-in-out;
@@ -127,7 +149,7 @@
 }
 
 /* Empty State */
-.empty-illustration img {
+.empty-state img {
     height: 150px;
     width: auto;
     opacity: 0.8;
