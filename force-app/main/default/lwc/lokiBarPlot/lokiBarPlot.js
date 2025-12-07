@@ -34,6 +34,7 @@ export default class LBarPlot extends LightningElement {
     }
 
     async renderedCallback() {
+        console.log('plot-data:',this.plotData);
         try {
             await getObservablePlotJS(this);
             if (window.Plot) {
@@ -52,8 +53,13 @@ export default class LBarPlot extends LightningElement {
 
         plotContainer.innerHTML = '';
 
-        if (!window.Plot || !Array.isArray(this.plotData) || !this.dimension || !this.measure) {
-            plotContainer.innerHTML = 'Plot library not found or plot data not available.';
+        if (!window.Plot ){
+            plotContainer.innerHTML = 'Plot library not found';
+            return;
+        }
+        if( !Array.isArray(this.plotData) || !this.dimension || !this.measure) {
+            plotContainer.innerHTML = 'plot-data not available or incorrect dimension or measure';
+            console.error('plot-data not available or incorrect dimension or measure', JSON.stringify(this.plotData), this.dimension, this.measure);
             return;
         }
 

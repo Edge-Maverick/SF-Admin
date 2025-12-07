@@ -1,0 +1,84 @@
+<template>
+    <div class="slds-card slds-p-around_medium">
+        
+        <!-- Header, Title, and Theme Application -->
+        <div class="slds-p-around_x-small slds-m-bottom_small slds-border_bottom slds-border_left slds-border_right slds-border_top slds-theme_override" 
+             style={customThemeStyle} 
+             data-theme-class={themeClass}>
+            
+            <header class="slds-media slds-media_center slds-m-bottom_x-small">
+                <div class="slds-media__figure">
+                    <!-- Standard icon for a list/table -->
+                    <lightning-icon icon-name="utility:table" size="small"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-text-heading_small slds-truncate">{title}</h2>
+                    <p class="slds-text-body_small slds-text-color_weak">{countDisplay}</p>
+                </div>
+            </header>
+
+            <div class="slds-grid slds-wrap slds-gutters">
+                <!-- Search Input -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12">
+                    <lightning-input
+                        type="search" 
+                        label="Search" 
+                        value={searchKey} 
+                        onchange={handleSearch}
+                        variant="label-inline"
+                    ></lightning-input>
+                </div>
+
+                <!-- Column Visibility Toggle (Dropdown Checkboxes) -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-align_absolute-center slds-p-top_large">
+                    <lightning-dual-listbox
+                        name="columns"
+                        label="Visible Columns"
+                        source-label="Hidden Fields"
+                        selected-label="Visible Fields"
+                        options={columnOptions}
+                        onchange={handleColumnChange}
+                    ></lightning-dual-listbox>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lightning Datatable -->
+        <template if:true={visibleColumns.length}>
+            <lightning-datatable
+                key-field={keyField}
+                data={filteredData}
+                columns={visibleColumns}
+                onsort={handleSort}
+                sorted-by={sortedBy}
+                sorted-direction={sortDirection}
+                hide-checkbox-column
+            ></lightning-datatable>
+        </template>
+        <template if:false={visibleColumns.length}>
+            <div class="slds-box slds-align_absolute-center slds-text-align_center slds-text-color_weak">
+                No data or all fields were hidden.
+            </div>
+        </template>
+
+    </div>
+
+    <div style="width: 50rem;height:30rem;">
+        <lightning-card icon-name="utility:table">
+            <div slot="title">
+                <div class="slds-media__body">
+                    <h1 class="slds-text-heading_small slds-truncate">{title}</h1>
+                    <p class="slds-text-body_small slds-text-color_weak slds-badge">{countDisplay}</p>
+                </div>
+            </div>
+            <div slot="actions">
+                <lightning-button-group>
+                    <lightning-button label={filterCount} icon-name="utility:filterList"></lightning-button>
+                    <lightning-button label={sortCount} icon-name="utility:sort"></lightning-button>
+                    <lightning-button label={hideCount} icon-name="utility:hide" variant="brand-outline"></lightning-button>
+                </lightning-button-group>
+            </div>
+            <div slot="footer">footer</div>
+        </lightning-card>
+    </div>
+</template>

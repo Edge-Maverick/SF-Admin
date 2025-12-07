@@ -3,18 +3,18 @@
     <div class="org-horizon-main">
                 <div class="navigation-container">
                 <div class="slds-var-p-around_small">
-                    <strong class="slds-text-heading_small" style="color:#bc876d">Hello! <strong style="color:#bb673e;font-size:24px"> {userName}</strong>  </strong>
-                    <div class="padding:0;margin:0;"><strong class="" style="color:#bc876d;font-size:5px;padding:0;margin:0;">ADMIN101.ADMIN101.ADMIN101.ADMIN101.ADMIN101.ADMIN101</strong></div>
+                    <!--strong class="slds-text-heading_small" style="color:#bc876d">Hello! <strong style="color:#bb673e;font-size:24px"> {userName}</strong>  </strong>
+                    <div class="padding:0;margin:0;"><strong class="" style="color:#bc876d;font-size:5px;padding:0;margin:0;">ADMIN101.ADMIN101.ADMIN101.ADMIN101.ADMIN101.ADMIN101</strong></div-->
                     <div class="navigation-highlight">
                         <template lwc:if={currentOrgInfo}>
                             <ol>
-                                <li>
-                                    <span style="font-size: 10px;">Name: </span>
-                                    <span class="quick-copy slds-text-link_faux" onclick={copyTextAndNotify}>{currentOrgInfo.Name}</span></li>
-                                <li>
-                                    <span style="font-size: 10px;">OrgId: </span>
-                                    <span class="quick-copy slds-text-link_faux" onclick={copyTextAndNotify}>{currentOrgInfo.Id}</span>
-                                    </li>
+                                <li class="quick-copy">
+                                    <span class="slds-text-link_faux">{currentOrgInfo.Name}</span>
+                                </li>
+                                <li class="quick-copy">
+                                    <span class="slds-text-link_faux">{maskedOrgId}</span>
+                                    <lightning-button-icon icon-name="utility:copy" size="medium" onclick={copyOrgId} class="slds-float_right" variant="bare"></lightning-button-icon>
+                                </li>
                                 <li>
                                     <template lwc:if={isProduction}>
                                         <span class="slds-badge">Production</span>
@@ -30,17 +30,17 @@
                                 type="ellie" 
                                 alternative-text="Loading..">
                             </lightning-dynamic-icon>
-                            <lightning-spinner alternative-text="Loading" size="x-small"></lightning-spinner>
                         </template>
                     </div>
                 </div>
                 <lightning-vertical-navigation selected-item={currentContent} onselect={handleSelect} class="navigation">
                     
-                    <lightning-vertical-navigation-item-icon label="Overview" name="org_overview" icon-name="utility:home"></lightning-vertical-navigation-item-icon>
+                    <lightning-vertical-navigation-item-icon label="Org Overview" name="org_overview" icon-name="utility:home"></lightning-vertical-navigation-item-icon>
                     <lightning-vertical-navigation-item label="Licence Utilization" name="licence_utilization"></lightning-vertical-navigation-item>
                     <lightning-vertical-navigation-item label="User Adoption" name="user_adoption"></lightning-vertical-navigation-item>
                     <lightning-vertical-navigation-item label="Login Forensics" name="login_forensics"></lightning-vertical-navigation-item>
                     <lightning-vertical-navigation-item label="Setup Audit Trail" name="setup_audit_trail"></lightning-vertical-navigation-item>
+                    <lightning-vertical-navigation-item-icon label="Technical Health" name="techincal_health" icon-name="utility:heart"></lightning-vertical-navigation-item-icon>
                     <template lwc:if={isProduction}>
                         <lightning-vertical-navigation-item-icon label="Sandbox" name="sandbox_overview" icon-name="utility:dx_org_test"></lightning-vertical-navigation-item-icon>
                     </template>
@@ -62,9 +62,13 @@
                     </template>
                     <template lwc:elseif={showLicenceUtilization}>
                         <c-license-utilization></c-license-utilization>
+                        <c-license-utilization-v2></c-license-utilization-v2>
                     </template>
                     <template lwc:elseif={showSetupAuditTrail}>
                         <c-setup-audit-trail-viewer></c-setup-audit-trail-viewer>
+                    </template>
+                    <template lwc:elseif={showTechincalHealth}>
+                        <c-techincal-health></c-techincal-health>
                     </template>
                     <template lwc:else>
                         Select a Proper Navigation option.

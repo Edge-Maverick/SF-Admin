@@ -25,7 +25,16 @@ public with sharing class OrgOverviewController {
     public static LicenseUtilizationHelper.LicenceUtilizationWrapper getLicenceUtilization(){
         try {
             LicenseUtilizationHelper luw = new LicenseUtilizationHelper();
-            return luw.getUserLicences();
+            return luw.getLicenceUtilization();
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+    @AuraEnabled(cacheable=true)
+    public static LicenseUtilizationHelperV2.LicenseUtilizationWrapper getLicenseUtilization(){
+        try {
+            LicenseUtilizationHelperV2 luw = new LicenseUtilizationHelperV2('License Utilization');
+            return luw.getLicenseUtilization();
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }

@@ -1,99 +1,149 @@
 public with sharing class LicenseUtilizationHelper {
+    
     private static final String MODULE_LU = 'License Utilization';
-    List<String> lstExclusionUL;
-    List<String> lstCriticalUL;
+
+    private static final String OBJECT_USERLICENCE = 'UserLicence';
+    private static final String OBJECT_PSLICENCE = 'PermissionSetLicense';
+    
 
     public LicenseUtilizationHelper() {
-        lstExclusionUL = AdminItemRuleService.getDoNotShowItems('UserLicence', MODULE_LU);
-        lstCriticalUL = AdminItemRuleService.getAlwaysShowCriticalItems('UserLicence', MODULE_LU);
+
     }
     
-    public LicenceUtilizationWrapper getUserLicences(){
+    public LicenceUtilizationWrapper getLicenceUtilization(){
+        LicenceUtilizationWrapper wrapper = new LicenceUtilizationWrapper();
+        wrapper.lstLicenceUsage = getUserLicences();
+        wrapper.lstPSLicenceUsage = getPSLicences();
+        wrapper.dormantUsers = getDormantUsers();
+        wrapper.lstPSMetricUsage = getPermSetLicenceMetrics();
+        wrapper.lstFeatureMetricUsage = getFeatureLicenceMetrics();
+        return wrapper;
+    }
+    public List<LicenseUsageWrapper> getUserLicences(){
         List<LicenseUsageWrapper> lstUserLicenses = new List<LicenseUsageWrapper>();
-        List<Datetime> lstUpdatedDatetimes = new List<Datetime>();
-        for(UserLicense ul: [SELECT MasterLabel,TotalLicenses,UsedLicenses,UsedLicensesLastUpdated FROM UserLicense WHERE Status='Active' AND Name NOT IN :lstExclusionUL LIMIT 1000]){
-            lstUserLicenses.add(new LicenseUsageWrapper(ul));
-            lstUpdatedDatetimes.add(ul.UsedLicensesLastUpdated);
+        Map<String,Integer> mapActiveUserPerLicences = getActiveUserPerLicences();
+        
+        List<String> lstCriticalUL = new List<String>();
+        lstCriticalUL = AdminItemRuleService.getCriticalItems(OBJECT_USERLICENCE, MODULE_LU);
+
+        for(UserLicense ul: 
+        [
+            SELECT 
+            MasterLabel,TotalLicenses,UsedLicenses 
+            FROM UserLicense 
+            WHERE Status='Active' AND MasterLabel NOT IN :AdminItemRuleService.getDoNotShowItems(OBJECT_USERLICENCE, MODULE_LU) 
+            LIMIT 1000
+        ])
+        {
+            lstUserLicenses.add(new LicenseUsageWrapper(ul, lstCriticalUL.contains(ul.MasterLabel), mapActiveUserPerLicences.get(ul.MasterLabel) ));
         }
-
-        if(lstUserLicenses.size() > 0){
-            LicenceUtilizationWrapper wrapper = new LicenceUtilizationWrapper();
-            wrapper.lstLicenceUsage = lstUserLicenses;
-            wrapper.lastUpdated = getRoughDatetimeSummary(lstUpdatedDatetimes);
-            wrapper.lstCriticalLicences = lstCriticalUL;
-            wrapper.dormantUsers = getDormantUsers();
-            return wrapper;
-        }
-        return null;
-    }
-
-    private String getRoughDatetimeSummary(List<Datetime> dtList) {
-        if (dtList == null || dtList.isEmpty()) return 'No values';
-
-        // Sort the list
-        dtList.sort();
-
-        Datetime first = dtList[0];
-        Datetime last = dtList[dtList.size() - 1];
-
-        Long diffMs = Math.abs(last.getTime() - first.getTime());
-        Long diffMinutes = diffMs / (1000 * 60);
-
-        // Rule 1: All values same (or extremely close)
-        if (diffMinutes == 0) {
-            return 'Exact: ' + first.format();
-        }
-
-        // Calculate average datetime
-        Long totalMs = 0;
-        for (Datetime d : dtList){totalMs += d.getTime();}
-        Datetime avg = Datetime.newInstance(totalMs / dtList.size());
-
-        // Rule 2: All times within 5 mins
-        if (diffMinutes <= 5) {
-            return 'Approx: ' + avg.format();
-        }
-
-        // Rule 3: More than 5 mins difference → ± 15 mins terminology
-        Datetime plus15  = avg.addMinutes(15);
-        Datetime minus15 = avg.addMinutes(-15);
-
-        return 'Approx Range: ' +
-            minus15.format() +
-            ' to ' +
-            plus15.format();
+        return lstUserLicenses;
     }
     
+    private List<LicenseUsageWrapper> getPSLicences(){
+        List<LicenseUsageWrapper> lstPermSetLicences = new List<LicenseUsageWrapper>();
+        List<String> lstCriticalUL = new List<String>();
+        lstCriticalUL = AdminItemRuleService.getCriticalItems(OBJECT_PSLICENCE, MODULE_LU);
+
+        for(PermissionSetLicense psl:
+        [  
+            SELECT 
+            MasterLabel,TotalLicenses,UsedLicenses 
+            FROM PermissionSetLicense 
+            WHERE Status='Active' AND MasterLabel NOT IN :AdminItemRuleService.getDoNotShowItems(OBJECT_PSLICENCE, MODULE_LU)
+        ])
+        {
+            lstPermSetLicences.add(new LicenseUsageWrapper(psl, lstCriticalUL.contains(psl.MasterLabel)) );
+        }
+        return lstPermSetLicences;
+    }
     private Integer getDormantUsers(){
-        return 
-        [
-            SELECT count() 
+        return
+            [
+                SELECT count() 
+                FROM User 
+                WHERE IsActive = TRUE 
+                AND ( LastLoginDate < LAST_N_DAYS:90 OR (LastLoginDate=null AND CreatedDate < LAST_N_DAYS:30) )
+            ];
+    }
+    private Map<String,Integer> getActiveUserPerLicences(){
+        Map<String,Integer> mapActiveUserPerLicences = new Map<String,Integer>();
+        for(AggregateResult ar: [
+            SELECT Profile.UserLicense.MasterLabel, count(id) 
             FROM User 
-            WHERE IsActive = TRUE 
-            AND ( LastLoginDate < LAST_N_DAYS:90 OR (LastLoginDate=null AND CreatedDate < LAST_N_DAYS:30) )
-            AND Profile.UserLicenseId NOT IN :lstExclusionUL
-        ];
-    } 
+            WHERE IsActive=TRUE AND LastLoginDate = LAST_N_DAYS:30 
+            GROUP BY Profile.UserLicense.MasterLabel
+        ])
+        {
+            mapActiveUserPerLicences.put((String)ar.get('MasterLabel'),(Integer)ar.get('expr0'));
+        }
+        return mapActiveUserPerLicences;
+    }
+    private List<ActivePermSetLicenseMetric> getPermSetLicenceMetrics(){
+        return
+            [
+                SELECT MasterLabel, TotalLicenses, AssignedUserCount, ActiveUserCount, MetricsDate 
+                FROM ActivePermSetLicenseMetric 
+            ];
+    }
+    private List<ActiveFeatureLicenseMetric> getFeatureLicenceMetrics(){
+        return
+            [
+                SELECT FeatureType, TotalLicenseCount, AssignedUserCount, ActiveUserCount, MetricsDate 
+                FROM ActiveFeatureLicenseMetric 
+            ];
+    }
 
 
     public class LicenseUsageWrapper{
-        @AuraEnabled public String Label{get;set;}
-        @AuraEnabled public Integer TotalLicenses{get;set;}
-        @AuraEnabled public Integer UsedLicenses{get;set;}
-        @AuraEnabled public Integer Percent{get;set;}
+        @AuraEnabled public String label{get;set;}
+        @AuraEnabled public Integer totalLicenses{get;set;}
+        @AuraEnabled public Integer usedLicenses{get;set;}
+        @AuraEnabled public Integer mothlyActiveLicenses{get;set;}
+        @AuraEnabled public Decimal percent{get;set;}
+        @AuraEnabled public Boolean isCritical{get;set;}
 
-        public LicenseUsageWrapper(sObject sobj){
-            Label = (String)sobj.get('MasterLabel');
-            TotalLicenses = (Integer)sobj.get('TotalLicenses');
-            UsedLicenses = (Integer)sobj.get('UsedLicenses');
+        public LicenseUsageWrapper(sObject sobj, Boolean critical){
+            label = (String)sobj.get('MasterLabel');
+            totalLicenses = (Integer)sobj.get('TotalLicenses');
+            usedLicenses = (Integer)sobj.get('UsedLicenses');
 
-            Percent = (Integer)((UsedLicenses/TotalLicenses)*100);
+            percent = (Decimal)((UsedLicenses/TotalLicenses)*100);
+
+            isCritical = critical;
+        }
+        public LicenseUsageWrapper(sObject sobj, Boolean critical, Integer mau){
+            label = (String)sobj.get('MasterLabel');
+            totalLicenses = (Integer)sobj.get('TotalLicenses');
+            usedLicenses = (Integer)sobj.get('UsedLicenses');
+
+            mothlyActiveLicenses = mau;
+
+            percent = (Decimal)((UsedLicenses/TotalLicenses)*100);
+
+            isCritical = critical;
+        }
+    }
+    public class LicenseMetricWrapper{
+        @AuraEnabled public String metricLabel{get;set;}
+        @AuraEnabled public String metricType{get;set;}
+        @AuraEnabled public Integer metricValue{get;set;}
+        @AuraEnabled public Date metricDate{get;set;}
+        @AuraEnabled public Boolean isCritical{get;set;}
+
+        public LicenseMetricWrapper(String mlabel, String mType, Integer mValue, Date mDate, Boolean critical ){
+            metricLabel = mlabel;
+            metricType = mType;
+            metricValue = mValue;
+            metricDate = mDate;
+            isCritical = critical;
         }
     }
     public class LicenceUtilizationWrapper{
         @AuraEnabled public List<LicenseUsageWrapper> lstLicenceUsage{get;set;}
-        @AuraEnabled public String lastUpdated{get;set;}
-        @AuraEnabled public List<String> lstCriticalLicences{get;set;}
+        @AuraEnabled public List<LicenseUsageWrapper> lstPSLicenceUsage{get;set;}
         @AuraEnabled public Integer dormantUsers{get;set;}
+        @AuraEnabled public List<ActivePermSetLicenseMetric> lstPSMetricUsage{get;set;}
+        @AuraEnabled public List<ActiveFeatureLicenseMetric> lstFeatureMetricUsage{get;set;}
     }
 }

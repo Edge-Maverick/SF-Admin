@@ -1,6 +1,28 @@
 <template>
     <lightning-layout vertical-align="spread" multiple-rows>
+        
+        <lightning-layout-item size="12">
+            <hr/>
+            <lightning-layout horizontal-align="space">
+                <lightning-layout-item size="3">
+                    <c-loki-kpi-progress title="USER LICENSE %" used-value={totalUserLicence.usedValue} total-value={totalUserLicence.totalValue} display-mode="fill" auto-format inverse-format>
+                    </c-loki-kpi-progress>
+                </lightning-layout-item>
+                <lightning-layout-item size="3">
+                    <c-loki-kpi-progress title="Permission set LICENSE %" used-value={totalPSLicence.usedValue} total-value={totalPSLicence.totalValue} display-mode="fill" auto-format inverse-format>
+                    </c-loki-kpi-progress>
+                </lightning-layout-item>
+                <lightning-layout-item size="3">
+                    <c-loki-kpi-progress title="Feature LICENSE %" used-value=91 total-value=100 display-mode="fill" auto-format inverse-format>
+                    </c-loki-kpi-progress> <!-- TODO : featch feature licences from the apex -->
+                </lightning-layout-item>
+            </lightning-layout>
+        </lightning-layout-item>
+
+        
+        
         <lightning-layout-item size="12" >
+            <hr/>
             <div style="width:100%;" class="slds-p-around_medium">
                 <strong class="slds-text-heading_medium">User Licences</strong>
                 <lightning-helptext content="Shows the utilization of licenses across the org. ( source: UserLicense|User )"></lightning-helptext>
@@ -32,27 +54,36 @@
                     horizontal="true"
                     title="License Utilization (%)"
                     plot-data={licenceUtilizationData}
-                    dimension="Label"
-                    measure="Percent"
-                    sort="desc"
-                    extra-width="250">
+                    dimension="label"
+                    measure="percent"
+                    sort="desc">
                 </c-loki-bar-plot>
             </template>
             <template lwc:else>
                 loading..
             </template>
-            
         </lightning-layout-item>
-        <lightning-layout-item size="3" >
-            <c-loki-text title="PERM SET LICENCES" value="200">
-            </c-loki-text>
-            <c-loki-text title="USED LICENCES" value="200">
-            </c-loki-text>
-            <c-loki-text title="TOTAL LICENCES" value="200">
-            </c-loki-text>
-            <c-loki-text title="USED LICENCES" value="SOME!">                
-                <lightning-icon icon-name="utility:jump_to_bottom" size="small"></lightning-icon>
-            </c-loki-text>
+        <lightning-layout-item size="3">
+            <div class="slds-p-around_medium slds-m-top_xx-small slds-card" style="background-color:rgb(255, 230, 230);">
+                <div class="slds-p-bottom_small">
+                    <strong class="slds-text-heading_small">Critical Licences</strong>
+                    <span class="slds-float_right slds-badge slds-badge_lightest">{totalUserLicenceCritical.count}</span>
+                </div>
+                <div style="height:445px;" class="slds-scrollable">
+                    <template lwc:if={licenceUtilizationData}>
+                        <template for:each={licenceUtilizationData} for:item="licence">
+                            <template if:true={licence.isCritical}>
+                                <c-loki-kpi-progress key={licence.label} title={licence.label} used-value={licence.usedLicenses} total-value={licence.totalLicenses} display-mode="bar">
+                                </c-loki-kpi-progress>
+                            </template>
+                        </template>
+                    </template>
+                    <template lwc:else>
+                        <div class="slds-text-align_center" style="width: 100%;">No Critical Licences Found...</div>
+                    </template>
+                </div>
+                <div class="slds-text-align_center" style="width: 100%;">(Use <strong>Settings</strong> to Set Critical Licences)</div>
+            </div>       
         </lightning-layout-item>
     </lightning-layout>
     <hr/>
@@ -60,8 +91,48 @@
         <lightning-layout-item size="12" >
             <div style="width:100%;" class="slds-p-around_medium">
                 <strong class="slds-text-heading_medium">Permission Set Licences</strong>
+                <lightning-helptext content="Shows the utilization of licenses across the org. ( source: UserLicense|User )"></lightning-helptext>
             </div>
         </lightning-layout-item>
+        <lightning-layout-item size="8" >
+            <template lwc:if={licenceUtilizationData}>
+                <c-loki-bar-plot
+                    horizontal="true"
+                    title="Permission Set License Utilization (%)"
+                    plot-data={licenceUtilizationPS}
+                    dimension="label"
+                    measure="percent"
+                    sort="desc">
+                </c-loki-bar-plot>
+            </template>
+            <template lwc:else>
+                loading..
+            </template>
+        </lightning-layout-item>
+        <lightning-layout-item size="4">
+            <c-loki-kpi-progress title="PERMISSION SET LICENSE %" used-value={totalPSLicence.usedValue} total-value={totalPSLicence.totalValue} display-mode="ring" auto-format inverse-format>
+            </c-loki-kpi-progress>
+            <c-loki-kpi-progress title="PS CRITICAL LICENSE %" used-value={totalPSLicenceCritical.usedValue} total-value={totalPSLicenceCritical.totalValue} display-mode="ring" auto-format inverse-format>
+            </c-loki-kpi-progress>
+            <c-loki-text title="AVAILABLE CRITICAL LICENCE #" text={totalPSLicenceCritical.remainingValue} hide-icon>
+            </c-loki-text>
+        </lightning-layout-item>
+        <lightning-layout-item size="12" >
+            {psMetric}
+            <template lwc:if={licenceMetricsPS}>
+                <c-loki-bar-plot
+                    horizontal="true"
+                    title="Permission Set Metrics"
+                    plot-data={licenceMetricsPS}
+                    dimension="MasterLabel"
+                    measure="ActiveUserCount"
+                    sort="desc">
+                </c-loki-bar-plot>
+            </template>
+            <template lwc:else>
+                loading..
+            </template>
 
+        </lightning-layout-item>
     </lightning-layout>
 </template>

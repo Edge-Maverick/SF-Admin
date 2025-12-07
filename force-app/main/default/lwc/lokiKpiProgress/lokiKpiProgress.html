@@ -51,9 +51,15 @@
                 <span>{title}</span>
             </div>
             <div class={categorizeStyle} style="font-weight:800;font-size:large;min-height:40px">
-                <p class="kpi-value slds-m-bottom_small">{usedValue}</p>
+                <span class="kpi-value slds-m-bottom_small slds-m-right_small">{usedValue}</span>
                 <template lwc:if={totalValue}>
-                    <p class="kpi-total slds-m-bottom_small">of {totalValue}</p>
+                    <span class="kpi-total slds-m-bottom_small">of {totalValue}</span>
+                </template>
+                <template lwc:if={remainingValue}>
+                    <div class="slds-float_right">
+                        <span class="kpi-total">available : </span>
+                        <span class="kpi-value">{remainingValue}</span>
+                    </div>
                 </template>
             </div>
             <div class="progress-bar-container">

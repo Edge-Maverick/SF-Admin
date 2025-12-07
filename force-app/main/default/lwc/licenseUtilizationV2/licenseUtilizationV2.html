@@ -1,0 +1,48 @@
+<template>
+    <lightning-card title="User License Chart">
+        <div slot="actions">
+            <span>Normalize? </span>
+            <lightning-input type="checkbox" label="normalize ?" onchange={handleNormalizeChange} checked={isNomaralized} style="display:inline-block;padding-right:1rem;" variant="label-hidden"></lightning-input>
+            <lightning-button-group>
+                <lightning-button title="'Count of Licenses' is used to draw the chart" name="no_view" label="# View" variant={noViewSelected} onclick={handleViewSelection}></lightning-button>
+                <lightning-button title="'(Count of Licenses * Cost per License)' is used to draw the chart" name="cost_view" label="$ View" variant={costViewSelected}  onclick={handleViewSelection}></lightning-button>
+            </lightning-button-group>
+        </div>
+
+        <div class="body slds-p-around_medium">
+        <lightning-layout vertical-align="spread" multiple-rows>
+        <lightning-layout-item size="8">
+        
+            <div>
+                <template lwc:if={chartData}>
+                    {chartData}
+                </template>
+                <template lwc:else>
+                    <div class="slds-text-align_center" style="width: 100%;">
+                        <lightning-spinner size="small"></lightning-spinner>
+                        Graph is loading...
+                    </div>
+                </template>
+            </div>
+        
+        </lightning-layout-item>
+        <lightning-layout-item size="4">            
+            <template lwc:if={tableData}>
+                {tableData}
+                <lightning-datatable
+                    key-field="id"
+                    data={tableData}
+                    columns={tableColumns}
+                    hide-checkbox-column></lightning-datatable>
+            </template>
+            <template lwc:else>
+                <div class="slds-text-align_center" style="width: 100%;">
+                    <lightning-spinner size="small"></lightning-spinner>
+                    Graph is loading...
+                </div>
+            </template>
+        </lightning-layout-item>
+        </lightning-layout>
+        </div>
+    </lightning-card>
+</template>

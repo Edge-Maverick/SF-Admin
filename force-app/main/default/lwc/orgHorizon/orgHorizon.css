@@ -43,6 +43,13 @@
 }
 
 .quick-copy {
-    color: rgb(27, 86, 183);
+    display: block;
+    background-color: #bda295;
+    border-radius: 7px;
+    padding: 2px 4px;
+    margin: 2px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
     font-style: italic;
 }

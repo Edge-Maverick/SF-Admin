@@ -1,0 +1,42 @@
+/* Basic styling to apply theme classes dynamically (LWC supports inline style blocks) */
+/* The background color opacity is simulated in JS for hex codes */
+.slds-theme_override {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Red Theme */
+.slds-theme_override[data-theme-class*="border-red-500"] {
+    border: 1px solid var(--lwc-colorBorderError, #c23934);
+    background-color: var(--lwc-colorBackgroundHighlight, #fdf6f6);
+}
+
+/* Green Theme */
+.slds-theme_override[data-theme-class*="border-green-500"] {
+    border: 1px solid var(--lwc-colorBorderSuccess, #45c65a);
+    background-color: var(--lwc-colorBackground, #f6fdf6);
+}
+
+/* Orange Theme */
+.slds-theme_override[data-theme-class*="border-orange-500"] {
+    border: 1px solid var(--lwc-colorBorderWarning, #ffb75d);
+    background-color: var(--lwc-colorBackground, #fdfaf6);
+}
+
+/* Blue Theme */
+.slds-theme_override[data-theme-class*="border-blue-500"] {
+    border: 1px solid var(--lwc-colorBorderBrand, #0070d2);
+    background-color: var(--lwc-colorBackground, #f5faff);
+}
+
+/* Reset standard lightning-dual-listbox styling for better fit in a header area */
+.slds-duallistbox__header {
+    display: none;
+}
+.slds-duallistbox__vertical {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}

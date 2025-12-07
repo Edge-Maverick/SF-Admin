@@ -5,7 +5,7 @@ import hasAdminPermission3 from '@salesforce/userPermission/CustomizeApplication
 import hasAdminPermission4 from '@salesforce/userPermission/ModifyMetadata';
 import hasAdmin101 from '@salesforce/customPermission/Admin101'; // future namespace..
 
-import { getObservablePlotJS,pivotData } from 'c/lPlotUtils';
+import { getObservablePlotJS } from 'c/lPlotUtils';
 
 import getHomeDetails from '@salesforce/apex/OrgOverviewController.getHomeDetails';
 
@@ -49,14 +49,22 @@ export default class OrgHorizon extends LightningElement {
         return true;
         //return (this.currentOrgInfo && this.currentOrgInfo.IsSandbox === false); //TODO: to remove the initial true value. added for building..
     }
+    get maskedOrgId(){
+        return this.currentOrgInfo ? '00D'+this.currentOrgInfo.Id.replace(/^.{11}/,'...') : '.....';
+    }
 
     get userName(){
         return this.currentUser ? this.currentUser.FirstName : 'Admin';
     }
 
-    copyTextAndNotify(event){
-        const text = event.detail.value;
-        console.log('clipboard: ', text);
+    copyOrgId(){
+        navigator.clipboard.writeText(text)
+        .then(() => {
+        console.log("Copied!");
+        })
+        .catch(err => {
+        console.error("Clipboard error:", err);
+        });
     }
 
     handleSelect(event) {
@@ -77,5 +85,8 @@ export default class OrgHorizon extends LightningElement {
     }
     get showSetupAuditTrail(){
         return this.currentContent === 'setup_audit_trail';
+    }
+    get showTechincalHealth(){
+        return this.currentContent === 'techincal_health';
     }
 }

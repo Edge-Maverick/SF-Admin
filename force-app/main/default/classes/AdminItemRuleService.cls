@@ -2,7 +2,7 @@ public with sharing class AdminItemRuleService {
 
     public static final String DO_NOT_SHOW = 'DoNotShow';
     public static final String ALWAYS_SHOW = 'AlwaysShow';
-    public static final String ALWAYS_SHOW_CRITICAL = 'AlwaysShow-Critical';
+    public static final String CRITICAL = 'Critical';
     public static final String MAIN_FIELD = 'ItemLabel__c'; //all the methods in this class will return a list of values specified in this variable.
     public static final Integer MAX_ITEMS = 200;
 
@@ -12,8 +12,8 @@ public with sharing class AdminItemRuleService {
     public static List<String> getAlwaysShowItems(String objectName, String module){
         return getAdminItemRules(objectName, module, ALWAYS_SHOW);
     }
-    public static List<String> getAlwaysShowCriticalItems(String objectName, String module){
-        return getAdminItemRules(objectName, module, ALWAYS_SHOW_CRITICAL);
+    public static List<String> getCriticalItems(String objectName, String module){
+        return getAdminItemRules(objectName, module, CRITICAL);
     }
     public static List<String> getAdminItemRules(String objectName, String module, String behavior){
         List<String> lstItems = new List<String>();
@@ -43,6 +43,23 @@ public with sharing class AdminItemRuleService {
         }
 
         return lstItems;
+    }
+
+    public static Map<String,AdminItemRule__c> getAdminItemRules(String objectName, String module){
+        Map<String,AdminItemRule__c> mapItems = new Map<String,AdminItemRule__c>();
+
+        //escape single quotes
+        objectName = String.escapeSingleQuotes(objectName);
+        module = String.escapeSingleQuotes(module);
+
+        if(module == null){
+            throw new CustomException('Null value for module. Please check your input.');
+        }
+
+        for(AdminItemRule__c air : [SELECT ItemLabel__c,Behavior__c,UnitCost__c FROM AdminItemRule__c WHERE IsActive__c = TRUE AND Module__c = :module AND objectAPIName__c = :objectName LIMIT 5000 ] ){
+            mapItems.put(air.ItemLabel__c,air);
+        }
+        return mapItems;
     }
 
     //Custom Exception class

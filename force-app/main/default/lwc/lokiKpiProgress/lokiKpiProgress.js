@@ -20,6 +20,25 @@ export default class LokiKpiProgress extends LightningElement {
     @api autoFormat = false;
     @api inverseFormat = false;
     @api displayMode = 'ring'; // 'ring', 'bar', 'half-ring', 'fill'
+    @api color;
+
+    _category = NEUTRAL_THEME;
+
+    get remainingValue() {
+        return this.totalValue - this.usedValue;
+    }
+
+    connectedCallback(){
+        const className = this.getCategory();
+
+        // Map the theme constant to a specific hex color for the ring and text
+        let color = '#3b82f6'; // Blue (Default)
+        if (className === RED_THEME) color = '#ef4444'; // Red
+        else if (className === ORANGE_THEME) color = '#f59e0b'; // Orange
+        else if (className === GREEN_THEME) color = '#10b981'; // Green (Added a hex value)
+        this._category = className;
+        this.color = color;
+    }
     
     // --- Private Styling and Logic Properties ---
     _radius = RING_RADIUS;
@@ -35,7 +54,7 @@ export default class LokiKpiProgress extends LightningElement {
 
         if (!isNaN(used) && !isNaN(total) && total > 0) {
             // Clamp the value between 0 and 100
-            return Math.min(100, Math.max(0, Math.round((used / total) * 100)));
+            return Math.min(100, Math.max(0, ((used / total) * 100).toFixed(2) ));
         }
         return 0;
     }
@@ -91,16 +110,8 @@ export default class LokiKpiProgress extends LightningElement {
     
     // Determines the CSS class for the usedValue text color
     get categorizeStyle() {
-        const className = this.getCategory();
 
-        // Map the theme constant to a specific hex color for the ring and text
-        let color = '#3b82f6'; // Blue (Default)
-        if (className === RED_THEME) color = '#ef4444'; // Red
-        else if (className === ORANGE_THEME) color = '#f59e0b'; // Orange
-        else if (className === GREEN_THEME) color = '#10b981'; // Green (Added a hex value)
-        this.color = color;
-
-        return "slds-text-align_left " + className;
+        return "slds-text-align_left " + this._category;
     }
     
     getCategory() {
@@ -110,7 +121,7 @@ export default class LokiKpiProgress extends LightningElement {
         
         // Use inverseFormat to swap RED and GREEN meanings
         if (percent > 90) return this.inverseFormat ? GREEN_THEME : RED_THEME;
-        else if (percent > 75) return ORANGE_THEME;
+        else if (percent > 50) return ORANGE_THEME;
         else return this.inverseFormat ? RED_THEME : GREEN_THEME;
     }
     
@@ -126,7 +137,7 @@ export default class LokiKpiProgress extends LightningElement {
 
     // Style for Fill Container mode
     get fillLevelStyle() {
-        return `height: ${this.actualPercent}%; background-color: ${this.color};`;
+        return `height: ${this.actualPercent}%; background-color: #9bbbddff ;opacity: 0.6;`;
     }
     
     // Style for Half-Ring SVG (needs rotation)
