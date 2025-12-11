@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BehaviourToCategory</fullName>
+    <active>true</active>
+    <description>Validates the Behaviour and Category dependency,</description>
+    <errorConditionFormula>AND ( 
+ISPICKVAL( Behavior__c ,&apos;Category&apos;),
+OR (  ISBLANK(Category__c) , ISNULL(Category__c)  )
+)</errorConditionFormula>
+    <errorDisplayField>Category__c</errorDisplayField>
+    <errorMessage>Invalid value for Category, Category should not be empty when Behavior is Category.</errorMessage>
+</ValidationRule>

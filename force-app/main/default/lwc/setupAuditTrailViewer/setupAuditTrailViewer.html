@@ -5,11 +5,12 @@
             <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-spread">
                 <div class="slds-media slds-media_center">
                     <div class="slds-media__figure">
-                        <span class="slds-icon_container slds-icon-standard-record" title="Setup Audit Trail">
+                        <lightning-icon icon-name="standard:variation_attribute_setup" size="large" alternative-text="Setup Audit Trail" title="Setup Audit Trail"></lightning-icon>
+                        <!--span class="slds-icon_container slds-icon-standard-record" title="Setup Audit Trail">
                             <svg class="slds-icon slds-page-header__icon" aria-hidden="true">
-                                <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#record"></use>
+                                <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#setup"></use>
                             </svg>
-                        </span>
+                        </span-->
                     </div>
                     <div class="slds-media__body">
                         <h1 class="slds-page-header__title" title="Setup Audit Trail">Setup Audit Trail</h1>
@@ -37,10 +38,13 @@
                 <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12">
                     <div class="slds-form-element">
                         <div class="slds-grid slds-gutters_small">
-                            <div class="slds-col slds-size_1-of-2">
+                            <div class="slds-col slds-size_1-of-3">
+                                <lightning-input type="search" label="Search Logs" value={searchTerm} onchange={handleSearchChange} variant="label-stacked" placeholder="Action, User..."></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3">
                                 <lightning-input type="date" label="Start Date" value={startDate} onchange={handleStartDateChange} variant="label-stacked"></lightning-input>
                             </div>
-                            <div class="slds-col slds-size_1-of-2">
+                            <div class="slds-col slds-size_1-of-3">
                                 <lightning-input type="date" label="End Date" value={endDate} onchange={handleEndDateChange} variant="label-stacked"></lightning-input>
                             </div>
                         </div>

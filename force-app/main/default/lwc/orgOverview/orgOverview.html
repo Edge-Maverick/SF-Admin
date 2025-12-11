@@ -14,77 +14,54 @@
             <!-- Collapsible Details Section -->
             <div class={contentClass}>
                 <template if:true={orgDetails}>
-                <div class="dashboard-grid slds-grid slds-gutters_small slds-var-p-vertical_medium slds-wrap">
-                    
-                    <!-- Tile 1: Identity -->
-                    <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
-                        <div class="dashboard-tile identity-tile">
-                            <div class="tile-header slds-grid slds-grid_vertical-align-center">
-                                <lightning-icon icon-name="standard:account" size="small" class="tile-icon"></lightning-icon>
-                                <span class="tile-title slds-var-m-left_small">Identity</span>
-                            </div>
-                            <div class="tile-body">
-                                <h2 class="org-name-dash slds-truncate" title={orgDetails.Name}>{orgDetails.Name}</h2>
-                                <p class="org-id-dash">{orgDetails.Id}</p>
-                                <div class="slds-grid slds-grid_vertical-align-center slds-var-m-top_small">
-                                    <span class="slds-badge slds-theme_light">{orgDetails.OrganizationType}</span>
-                                    <lightning-badge label={sandboxLabel} class={sandboxBadgeClass}></lightning-badge>
+                    <lightning-layout multiple-rows>
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-media slds-media_center">
+                                <div class="slds-media__figure">
+                                    <lightning-icon icon-name="standard:account" size="small" variant="inverse" class="icon-container"></lightning-icon>
+                                </div>
+                                <div class="slds-media__body">
+                                    <p class="slds-text-title_caps slds-text-color_weak">Name</p>
+                                    <p class="slds-text-heading_small">{orgDetails.Name}</p>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Tile 2: System Health -->
-                    <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
-                        <div class="dashboard-tile health-tile">
-                            <div class="tile-header slds-grid slds-grid_vertical-align-center">
-                                <lightning-icon icon-name="standard:service_territory_member" size="small" class="tile-icon"></lightning-icon>
-                                <span class="tile-title slds-var-m-left_small">System Health</span>
-                            </div>
-                            <div class="tile-body slds-text-align_center slds-var-p-top_small">
-                                <template if:false={hasActiveIncidents}>
-                                    <div class="health-status green">
-                                        <lightning-icon icon-name="utility:check" variant="success" size="medium"></lightning-icon>
-                                        <p class="health-text">Fully Operational</p>
-                                    </div>
-                                </template>
-                                <template if:true={hasActiveIncidents}>
-                                    <div class="health-status red">
-                                        <lightning-icon icon-name="utility:warning" variant="error" size="medium"></lightning-icon>
-                                        <p class="health-text">{activeIncidents.length} Active Incidents</p>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tile 3: Limits Overview -->
-                    <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
-                         <div class="dashboard-tile limits-tile">
-                            <div class="tile-header slds-grid slds-grid_vertical-align-center">
-                                <lightning-icon icon-name="standard:performance" size="small" class="tile-icon"></lightning-icon>
-                                <span class="tile-title slds-var-m-left_small">Usage Limits</span>
-                            </div>
-                            <div class="tile-body slds-grid slds-grid_vertical-align-center slds-grid_align-spread slds-var-p-top_small">
-                                <div class="slds-text-align_center">
-                                    <div class="ring-container">
-                                        <lightning-progress-ring value="45" variant="base-autocomplete"></lightning-progress-ring>
-                                    </div>
-                                    <p class="limit-label slds-var-m-top_xx-small">Data Storage</p>
-                                    <p class="limit-value">45%</p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-media slds-media_center">
+                                <div class="slds-media__figure">
+                                    <lightning-icon icon-name="standard:identifier" size="small" variant="inverse" class="icon-container"></lightning-icon>
                                 </div>
-                                <div class="slds-text-align_center">
-                                    <div class="ring-container">
-                                        <lightning-progress-ring value="12" variant="base-autocomplete"></lightning-progress-ring>
-                                    </div>
-                                    <p class="limit-label slds-var-m-top_xx-small">API Calls</p>
-                                    <p class="limit-value">12%</p>
+                                <div class="slds-media__body">
+                                    <p class="slds-text-title_caps slds-text-color_weak">Org Id</p>
+                                    <p class="slds-text-heading_small">{orgDetails.Id}</p>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-media slds-media_center">
+                                <div class="slds-media__figure">
+                                    <lightning-icon icon-name="standard:server" size="small" variant="inverse" class="icon-container"></lightning-icon>
+                                </div>
+                                <div class="slds-media__body">
+                                    <p class="slds-text-title_caps slds-text-color_weak">Instance</p>
+                                    <p class="slds-text-heading_small">{orgDetails.InstanceName}</p>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" padding="around-small">
+                            <div class="slds-media slds-media_center">
+                                <div class="slds-media__figure">
+                                    <lightning-icon icon-name="standard:code_playground" size="small" variant="inverse" class="icon-container"></lightning-icon>
+                                </div>
+                                <div class="slds-media__body">
+                                    <p class="slds-text-title_caps slds-text-color_weak">Sandbox</p>
+                                    <p class="slds-text-heading_small">
+                                        <lightning-badge label={sandboxLabel} class={sandboxBadgeClass}></lightning-badge>
+                                    </p>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                    </lightning-layout>
                 </template>
                 
                 <template if:true={error}>

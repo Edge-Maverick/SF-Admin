@@ -3,9 +3,10 @@
     <fullName>Active_Admin_Item_Rules</fullName>
     <columns>NAME</columns>
     <columns>Behavior__c</columns>
+    <columns>Category__c</columns>
     <columns>Module__c</columns>
-    <columns>ObjectAPIName__c</columns>
     <columns>ItemKey__c</columns>
+    <columns>ObjectAPIName__c</columns>
     <columns>ItemLabel__c</columns>
     <columns>Description__c</columns>
     <filterScope>Everything</filterScope>

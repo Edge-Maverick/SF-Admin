@@ -12,6 +12,7 @@ export default class SetupAuditTrailViewer extends LightningElement {
     @track selectedSection = 'All';
     @track activeSections = [];
     @track showCriticalOnly = false;
+    @track searchTerm = '';
     @track isFilterOpen = true; // Default open for visibility
     
     rawLogs = []; 
@@ -53,6 +54,11 @@ export default class SetupAuditTrailViewer extends LightningElement {
 
     handleEndDateChange(event) {
         this.endDate = event.target.value;
+    }
+
+    handleSearchChange(event) {
+        this.searchTerm = event.target.value;
+        this.filterLogs();
     }
 
 
@@ -141,6 +147,16 @@ export default class SetupAuditTrailViewer extends LightningElement {
             // Level 2: Filter by Section
             const section = log.Section || 'Other';
             if (this.selectedSection === 'All' || this.selectedSection === section) {
+                
+                // Level 3: Text Search
+                if (this.searchTerm) {
+                    const term = this.searchTerm.toLowerCase();
+                    const match = (log.Action && log.Action.toLowerCase().includes(term)) ||
+                                  (log.Display && log.Display.toLowerCase().includes(term)) ||
+                                  (log.CreatedByName && log.CreatedByName.toLowerCase().includes(term));
+                    if (!match) return; // Skip if no match
+                }
+
                 if (!groups[section]) {
                     groups[section] = [];
                 }

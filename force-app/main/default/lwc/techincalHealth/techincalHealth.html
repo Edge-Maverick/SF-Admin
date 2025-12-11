@@ -1,42 +1,182 @@
 <template>
-    <lightning-card title="Technical Health Objects">
-        <ol>
-            <li>ApexClass</li>
-            <li>ApexEmailNotification</li>
-            <li>Apex Limit Event Object</li>
-            <li>ApexPage</li>
-            <li>ApexTrigger</li>
-            <li>ApexTypeImplementor</li>
-            <li>AsyncApexJob</li>
-            <li>Attachment + Document</li>
-            <li>AuraDefinitionBundle</li>
-            <li>AuthConfig + AuthConfigProviders + AuthProvider(can be used in Auth/Login Forinsics as well)</li>
-            <li>AutomatedAction</li>
-            <li>ConnectedApplication</li>
-            <li>ContactMonthlyMetric + ContactDailyMetric</li>
-            <li>EmailTemplateMonthlyMetric</li>
-            <li>FlowInterview</li>
-            <li>IframeWhiteListUrl</li>
-            <li>LeadMonthlyMetric</li>
-            <li>LightningToggleMetrics</li>
-            <li>LightningUsageByAppTypeMetrics +LightningUsageByBrowserMetrics + LightningUsageByPageMetrics + LightningUsageByFlexiPageMetrics </li>
-            <li>LightningExitByPageMetrics </li>
-            <li>RecordType</li>
-            <li>SamlSsoConfig</li>
-            <li>Scontrol</li>
-            <li>UserMonthlyMetric</li>
-            <li>VisualforceAccessMetrics</li>
-        </ol>
-    </lightning-card>
-    <lightning-card title="Login Forensics Objects (LOKI)">
-        <ol>
-            <li>ThirdPartyAccountLink</li>
-            <li>TwoFactorMethodsInfo</li>
-            <li>LoginIp</li>
-            <li>User</li>
-            <li>UserDevice</li>
-            <li>UserLogin</li>
-            <li>VerificationHistory</li>
-        </ol>
+    <lightning-card icon-name="standard:heart" title="Technical Health Monitor">
+        <div slot="actions">
+            <lightning-button-icon icon-name="utility:refresh" variant="border-filled" onclick={refreshStats} alternative-text="Refresh"></lightning-button-icon>
+        </div>
+
+        <div if:true={isLoading} class="slds-is-relative slds-p-around_large" style="height:200px">
+             <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+
+        <div if:false={isLoading} class="slds-grid slds-wrap slds-p-around_medium main-container">
+            
+            <div class="slds-col slds-size_1-of-1 slds-large-size_7-of-12 slds-p-right_medium border-right">
+                
+                <div class="section-header">Code Health</div>
+                <lightning-layout multiple-rows="true" class="slds-m-bottom_medium">
+                    <lightning-layout-item size="12" large-device-size="4" padding="around-small">
+                        <div class="stat-card cursor-pointer border-warning" onclick={handleCardClick} data-id="OUTDATED">
+                            <div class="icon-box"><lightning-icon icon-name="standard:recent" size="large" variant="warning"></lightning-icon></div>
+                            <div class="text-box">
+                                <div class="stat-value text-warning">{stats.outdatedComponents}</div>
+                                <div class="stat-label">Outdated (v64)</div>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size="12" large-device-size="4" padding="around-small">
+                        <div class="stat-card cursor-pointer border-danger" onclick={handleCardClick} data-id="MULTIPLE_TRIGGERS">
+                            <div class="icon-box"><lightning-icon icon-name="standard:apex_plugin" size="large" variant="error"></lightning-icon></div>
+                            <div class="text-box">
+                                <div class="stat-value text-danger">{stats.objectsWithMultipleTriggers}</div>
+                                <div class="stat-label">Multi-Trigger</div>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size="12" large-device-size="4" padding="around-small">
+                        <div class="stat-card cursor-pointer border-danger" onclick={handleCardClick} data-id="ASYNC_ERRORS">
+                            <div class="icon-box"><lightning-icon icon-name="standard:apex" size="large" variant="error"></lightning-icon></div>
+                            <div class="text-box">
+                                <div class="stat-value text-danger">{stats.asyncErrors}</div>
+                                <div class="stat-label">Async Errors (24h)</div>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout>
+
+                <div class="section-header">Automation</div>
+                <lightning-layout multiple-rows="true" class="slds-m-bottom_medium">
+                    <lightning-layout-item size="12" large-device-size="4" padding="around-small">
+                        <div class="stat-card cursor-pointer border-warning" onclick={handleCardClick} data-id="INACTIVE_FLOWS">
+                            <div class="icon-box"><lightning-icon icon-name="standard:flow" size="large" variant="warning"></lightning-icon></div>
+                            <div class="text-box">
+                                <div class="stat-value text-warning">{stats.inactiveFlows}</div>
+                                <div class="stat-label">Inactive Flows</div>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size="12" large-device-size="4" padding="around-small">
+                        <div class="stat-card cursor-pointer border-danger" onclick={handleCardClick} data-id="FAILED_INTERVIEWS">
+                            <div class="icon-box"><lightning-icon icon-name="standard:flow_runtime" size="large" variant="error"></lightning-icon></div>
+                            <div class="text-box">
+                                <div class="stat-value text-danger">{stats.failedInterviews}</div>
+                                <div class="stat-label">Failed Interviews</div>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size="12" large-device-size="4" padding="around-small">
+                        <div class="stat-card cursor-pointer border-danger" onclick={handleCardClick} data-id="PROCESS_BUILDERS">
+                            <div class="icon-box"><lightning-icon icon-name="standard:process" size="large" variant="error"></lightning-icon></div>
+                            <div class="text-box">
+                                <div class="stat-value text-danger">{stats.activeProcessBuilders}</div>
+                                <div class="stat-label">Legacy Process Builders</div>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout>
+
+                <div class="section-header">User & Access</div>
+                <lightning-layout multiple-rows="true" class="slds-m-bottom_medium">
+                    <lightning-layout-item size="12" large-device-size="4" padding="around-small">
+                        <div class="stat-card cursor-pointer border-warning" onclick={handleCardClick} data-id="STALE_USERS">
+                            <div class="icon-box"><lightning-icon icon-name="standard:user" size="large" variant="warning"></lightning-icon></div>
+                            <div class="text-box">
+                                <div class="stat-value text-warning">{stats.staleUsers}</div>
+                                <div class="stat-label">Stale Users (>90d)</div>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size="12" large-device-size="4" padding="around-small">
+                        <div class="stat-card cursor-pointer border-warning" onclick={handleCardClick} data-id="FROZEN_USERS">
+                            <div class="icon-box"><lightning-icon icon-name="standard:freeze_user" size="large" variant="warning"></lightning-icon></div>
+                            <div class="text-box">
+                                <div class="stat-value text-warning">{stats.frozenUsers}</div>
+                                <div class="stat-label">Frozen Users</div>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+
+                     <lightning-layout-item size="12" large-device-size="4" padding="around-small">
+                        <div class="stat-card cursor-pointer" onclick={handleCardClick} data-id="LICENSE_USAGE">
+                            <div class="icon-box"><lightning-icon icon-name="standard:avatar" size="large"></lightning-icon></div>
+                            <div class="text-box">
+                                <div class="stat-value">{stats.licenseUsagePercent}%</div>
+                                <div class="stat-label">SF License Usage</div>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout>
+
+                <div class="section-header">Limits & Security</div>
+                <lightning-layout multiple-rows="true">
+                    <lightning-layout-item size="12" large-device-size="4" padding="around-small">
+                        <div class="stat-card cursor-pointer" onclick={handleCardClick} data-id="ORG_LIMITS">
+                            <div class="icon-box"><lightning-icon icon-name="standard:database" size="large"></lightning-icon></div>
+                            <div class="text-box">
+                                <div class="stat-value">{stats.dataStoragePercent}%</div>
+                                <div class="stat-label">Data Storage</div>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+
+                     <lightning-layout-item size="12" large-device-size="4" padding="around-small">
+                        <div class="stat-card cursor-pointer" onclick={handleCardClick} data-id="ORG_LIMITS">
+                            <div class="icon-box"><lightning-icon icon-name="standard:api" size="large"></lightning-icon></div>
+                            <div class="text-box">
+                                <div class="stat-value">{stats.apiUsagePercent}%</div>
+                                <div class="stat-label">Daily API Usage</div>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+
+                     <lightning-layout-item size="12" large-device-size="4" padding="around-small">
+                         <div class="stat-card cursor-pointer border-danger" onclick={handleCardClick} data-id="EXPIRED_CERTS">
+                             <div class="icon-box"><lightning-icon icon-name="standard:entitlement" size="large" variant="error"></lightning-icon></div>
+                             <div class="text-box">
+                                 <div class="stat-value text-danger">{stats.expiredCerts}</div>
+                                 <div class="stat-label">Expired Certs</div>
+                             </div>
+                         </div>
+                     </lightning-layout-item>
+                </lightning-layout>
+
+            </div>
+
+            <div class="slds-col slds-size_1-of-1 slds-large-size_5-of-12 slds-p-left_medium">
+                <div class="slds-card slds-card_boundary h-100">
+                    <div class="slds-p-around_medium slds-border_bottom slds-theme_shade">
+                        <h2 class="slds-text-heading_medium">{selectedMetricTitle}</h2>
+                        <p class="slds-text-body_small slds-text-color_weak">Select a card to view breakdown.</p>
+                    </div>
+                    <div class="table-container">
+                        <div if:true={isTableLoading} class="slds-is-relative slds-p-around_large">
+                            <lightning-spinner alternative-text="Loading Details" size="small"></lightning-spinner>
+                        </div>
+                        <template if:false={isTableLoading}>
+                            <template if:true={tableData}>
+                                <div style="height: 600px;">
+                                    <lightning-datatable
+                                        key-field="id"
+                                        data={tableData}
+                                        columns={columns}
+                                        hide-checkbox-column>
+                                    </lightning-datatable>
+                                </div>
+                            </template>
+                            <template if:false={tableData}>
+                                <div class="slds-p-around_large slds-text-align_center slds-text-color_weak">
+                                    No records found or no category selected.
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </lightning-card>
 </template>

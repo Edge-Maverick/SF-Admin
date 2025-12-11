@@ -3,6 +3,8 @@
     <fullName>All</fullName>
     <columns>NAME</columns>
     <columns>Behavior__c</columns>
+    <columns>Module__c</columns>
+    <columns>Category__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

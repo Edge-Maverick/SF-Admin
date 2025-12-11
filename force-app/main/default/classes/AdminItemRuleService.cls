@@ -56,7 +56,7 @@ public with sharing class AdminItemRuleService {
             throw new CustomException('Null value for module. Please check your input.');
         }
 
-        for(AdminItemRule__c air : [SELECT ItemLabel__c,Behavior__c,UnitCost__c FROM AdminItemRule__c WHERE IsActive__c = TRUE AND Module__c = :module AND objectAPIName__c = :objectName LIMIT 5000 ] ){
+        for(AdminItemRule__c air : [SELECT ItemLabel__c,Behavior__c,UnitCost__c,Category__c FROM AdminItemRule__c WHERE IsActive__c = TRUE AND Module__c = :module AND objectAPIName__c = :objectName LIMIT 5000 ] ){
             mapItems.put(air.ItemLabel__c,air);
         }
         return mapItems;
