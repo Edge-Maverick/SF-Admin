@@ -1,0 +1,105 @@
+.score-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer, slightly larger shadow for pop */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s ease;
+}
+
+.score-card:hover {
+    transform: translateY(-2px);
+}
+
+.score-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center header */
+    gap: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.score-header h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #181818;
+    margin: 0;
+}
+
+.gauge-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gauge-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    /* We handle the fill with inline style in JS */
+    /* Inner circle to create the donut */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    mask: radial-gradient(transparent 62%, black 63%); /* Creates the hole */
+    -webkit-mask: radial-gradient(transparent 62%, black 63%);
+    transform: rotate(0deg); /* Start from top? No, usually gauges start from bottom or top.
+                              conic-gradient starts at 12 o'clock (0deg). */
+}
+
+/* 
+   Since we are using mask for the donut, we just need the background to be the conic gradient.
+*/
+
+.gauge-overlay {
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.score-value {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.score-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+
+/* Text Colors */
+.score-text.excellent { color: #04844b; }
+.score-text.good { color: #ffb75d; }
+.score-text.fair { color: #ff9a3c; } /* Distinct orange */
+.score-text.poor { color: #c23934; }
+
+
+.score-footer {
+    width: 100%;
+    text-align: center;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f2f2f2;
+}
+
+.score-footer p {
+    font-size: 0.75rem;
+    color: #696969;
+    margin: 0;
+}

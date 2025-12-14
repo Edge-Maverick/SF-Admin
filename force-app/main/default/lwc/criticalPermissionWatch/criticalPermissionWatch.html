@@ -1,0 +1,125 @@
+<template>
+    <div class="watch-card">
+        <div class="card-header">
+            <div class="header-title">
+                <lightning-icon icon-name="utility:shield" size="small" class="slds-m-right_x-small"></lightning-icon>
+                <h2>Critical Watch</h2>
+                <span class="live-pulse" title="Monitoring Active"></span>
+            </div>
+            <div class="header-actions">
+                <!-- Filter Chips -->
+                <div class="filter-chips">
+                    <button class={allFilterClass} onclick={handleFilterAll}>All</button>
+                    <button class={criticalFilterClass} onclick={handleFilterCritical}>Critical Only</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="timeline-view">
+            <template if:true={hasLogs}>
+                <div class="timeline-container">
+                    <template for:each={displayedLogs} for:item="log">
+                        
+                        <!-- SINGLE ITEM -->
+                        <div key={log.id} class="timeline-item">
+                            <!-- Marker -->
+                            <div class={log.markerClass}></div>
+                            
+                            <!-- Card Content -->
+                            <div class="card-wrapper">
+                                <div class="timeline-header">
+                                    <span class="timeline-actor">
+                                        by <strong>{log.createdBy}</strong>
+                                    </span>
+                                    <span class="timeline-date" title={log.createdDate}>
+                                        {log.relativeTime}
+                                    </span>
+                                </div>
+
+                                <div class="timeline-body">
+                                    <div class="timeline-title">
+                                        <span class="type-badge">{log.type}</span>
+                                        <template if:true={log.targetId}>
+                                            <a href="#" onclick={handleTargetClick} data-id={log.targetId} class="target-name">
+                                                {log.target}
+                                            </a>
+                                        </template>
+                                        <template if:false={log.targetId}>
+                                            <span class="target-name">{log.target}</span>
+                                        </template>
+                                    </div>
+                                    
+                                    <template if:true={log.riskList}>
+                                        <div class="risk-container">
+                                            <template for:each={log.riskList} for:item="risk">
+                                                <span key={risk} class="risk-badge">{risk}</span>
+                                            </template>
+                                        </div>
+                                    </template>
+                                    
+                                    <div class="timeline-details">
+                                        <template if:true={log.assigneeName}>
+                                            Assigned to 
+                                            <div class="user-inspector-wrapper">
+                                                <span class="user-link" 
+                                                      onmouseenter={handleUserEnter} 
+                                                      onmouseleave={handleUserLeave}
+                                                      data-id={log.id}>
+                                                    {log.assigneeName}
+                                                </span>
+                                            </div>
+                                        </template>
+                                        <template if:false={log.assigneeName}>
+                                            {log.operation}
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </template>
+                </div>
+            </template>
+            <template if:false={hasLogs}>
+                <div class="empty-state">
+                    <lightning-icon icon-name="utility:check" variant="success" size="medium" class="slds-m-bottom_small"></lightning-icon>
+                    <p>No critical changes detected recently.</p>
+                </div>
+            </template>
+        </div>
+        
+        <div class="card-footer">
+            <a href="#" onclick={handleViewAuditTrail} class="audit-link">
+                <span>View Full Audit Trail</span>
+                <lightning-icon icon-name="utility:forward" size="xx-small" class="slds-m-left_xx-small"></lightning-icon>
+            </a>
+        </div>
+    </div>
+
+    <!-- Fixed Popover -->
+    <template if:true={popoverVisible}>
+        <span class="popover-anchor">
+            <div class="user-popover fixed-popover" 
+                 lwc:ref="popover"
+                 onmouseenter={handlePopoverEnter} 
+                 onmouseleave={handleUserLeave}>
+                <div class="popover-header">
+                    <div class="popover-avatar">
+                        {activePopoverData.assigneeInitials}
+                    </div>
+                    <div class="popover-text">
+                        <h4>{activePopoverData.assigneeName}</h4>
+                        <span>{activePopoverData.assigneeTitle}</span>
+                    </div>
+                </div>
+                <div class="popover-details">
+                    <p><strong>Role:</strong> <span>{activePopoverData.assigneeRole}</span></p>
+                    <p><strong>Manager:</strong> <span>{activePopoverData.assigneeManager}</span></p>
+                    <p><strong>Status:</strong> 
+                        <span class={activePopoverData.activeClass}>{activePopoverData.assigneeActiveDisplay}</span>
+                    </p>
+                </div>
+            </div>
+        </span>
+    </template>
+</template>

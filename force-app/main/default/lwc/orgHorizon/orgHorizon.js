@@ -1,4 +1,5 @@
-import { LightningElement,track } from 'lwc';
+import { LightningElement,track, wire } from 'lwc';
+import { CurrentPageReference } from 'lightning/navigation';
 import hasAdminPermission1 from '@salesforce/userPermission/ViewSetup';
 import hasAdminPermission2 from '@salesforce/userPermission/ManageUsers';
 import hasAdminPermission3 from '@salesforce/userPermission/CustomizeApplication';
@@ -21,6 +22,14 @@ export default class OrgHorizon extends LightningElement {
 
     currentOrgInfo = undefined;
     currentUser = undefined;
+
+    @wire(CurrentPageReference)
+    wiredPageRef(pageRef) {
+        this.pageRef = pageRef;
+        if (pageRef && pageRef.state && pageRef.state.c__section) {
+            this.currentContent = pageRef.state.c__section;
+        }
+    }
 
     get hasAllAdminPermission() {
         return (
@@ -108,5 +117,9 @@ export default class OrgHorizon extends LightningElement {
     }
     get showTechincalHealth(){
         return this.currentContent === 'techincal_health';
+    }
+
+    get showCommandConsole(){
+        return this.currentContent === 'command_console';
     }
 }

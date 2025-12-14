@@ -1,0 +1,49 @@
+.console-container {
+    padding: 1rem;
+    background-color: #f4f6f9;
+    min-height: 100vh;
+}
+
+.pulse-section {
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: #444;
+}
+
+.section-title h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.zone-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.widget-wrapper {
+    min-height: 200px;
+}
+
+.widget-wrapper.full-width {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+    .zone-content {
+        grid-template-columns: 1fr;
+    }
+}

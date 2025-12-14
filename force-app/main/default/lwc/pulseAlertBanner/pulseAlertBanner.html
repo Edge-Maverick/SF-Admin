@@ -1,0 +1,20 @@
+<template>
+    <template if:true={hasAlerts}>
+        <div class="alert-banner">
+            <div class="alert-content">
+                <lightning-icon icon-name="utility:warning" variant="inverse" size="small"></lightning-icon>
+                <div class="alert-message">
+                    <strong>System Alert:</strong> Critical limits exceeded.
+                    <ul>
+                        <template for:each={alerts} for:item="alert">
+                            <li key={alert.name}>{alert.name}: {alert.percentUsed}%</li>
+                        </template>
+                    </ul>
+                </div>
+                <button class="close-btn" onclick={handleClose}>
+                    <lightning-icon icon-name="utility:close" variant="inverse" size="x-small"></lightning-icon>
+                </button>
+            </div>
+        </div>
+    </template>
+</template>

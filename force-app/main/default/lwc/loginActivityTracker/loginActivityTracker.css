@@ -1,0 +1,96 @@
+.login-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #444;
+}
+
+.stats-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 40px;
+    background: #eee;
+}
+
+.value {
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.label {
+    font-size: 0.75rem;
+    color: #666;
+    max-width: 100px;
+}
+
+.danger .value { color: #f44336; }
+/* .warning .value { color: #ff9800; }  -- Removed Dormant User Warning Color */
+
+.map-container {
+    flex-grow: 1;
+    margin-left: 1rem;
+    height: 150px; /* Mini map size */
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e5e5e5;
+}
+
+.card-footer {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto; 
+    /* Allow footer to grow/shrink or stay at bottom */
+    padding-top: 1rem;
+    width: 100%;
+}
+
+.risk-list {
+    display: none; /* Safely remove or hide */
+}
+
+/* Full Width Button for Modal Trigger */
+.full-width-btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.footer-link {
+    align-self: flex-end;
+    font-size: 0.8rem;
+}
+
+.footer-link {
+    font-size: 0.8rem;
+}

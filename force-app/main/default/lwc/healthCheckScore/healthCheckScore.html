@@ -1,0 +1,26 @@
+<template>
+    <div class="score-card">
+        <div class="score-header">
+            <h2>Security Score</h2>
+            <lightning-icon icon-name="utility:shield" size="small"></lightning-icon>
+        </div>
+        
+        <div class="gauge-container">
+            <!-- Background ring handled by CSS conic-gradient in style attribute -->
+            <div class="gauge-background" style={gaugeStyle}></div>
+            
+            <div class="gauge-overlay">
+                <span class={scoreColorClass}>
+                    <span class="score-value">{score}</span>
+                </span>
+                <span class={scoreColorClass}>
+                     <span class="score-label">{status}</span>
+                </span>
+            </div>
+        </div>
+        
+        <div class="score-footer">
+            <p>Baseline Assessment</p>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,41 @@
+<template>
+    <div class="console-container">
+        <!-- Pulse Alert Banner -->
+        <div class="pulse-section">
+            <c-pulse-alert-banner></c-pulse-alert-banner>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Security Zone Column -->
+            <div class="grid-section security-zone">
+                <div class="section-title">
+                    <lightning-icon icon-name="utility:shield" size="small"></lightning-icon>
+                    <h3>Security Zone</h3>
+                </div>
+                <div class="zone-content">
+                    <div class="widget-wrapper">
+                        <c-health-check-score></c-health-check-score>
+                    </div>
+                    <div class="widget-wrapper">
+                        <c-login-activity-tracker></c-login-activity-tracker>
+                    </div>
+                    <div class="widget-wrapper full-width">
+                        <c-critical-permission-watch></c-critical-permission-watch>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Future Sections (Placeholders for now) -->
+             <div class="grid-section">
+                <!-- Deployment Calendar -->
+                 <div class="section-title">
+                    <lightning-icon icon-name="utility:event" size="small"></lightning-icon>
+                    <h3>Operations Calendar</h3>
+                </div>
+                <div class="widget-wrapper full-width">
+                    <c-deployment-calendar></c-deployment-calendar>
+                </div>
+             </div>
+        </div>
+    </div>
+</template>

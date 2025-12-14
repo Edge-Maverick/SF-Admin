@@ -35,6 +35,7 @@
                 </div>
                 <lightning-vertical-navigation selected-item={currentContent} onselect={handleSelect} class="navigation">
                     
+                    <lightning-vertical-navigation-item-icon label="Command Console" name="command_console" icon-name="utility:desktop_console"></lightning-vertical-navigation-item-icon>
                     <lightning-vertical-navigation-item-icon label="Org Overview" name="org_overview" icon-name="utility:home"></lightning-vertical-navigation-item-icon>
                     <lightning-vertical-navigation-item-icon label="Licence Utilization" name="licence_utilization" icon-name="utility:resource_capacity"></lightning-vertical-navigation-item-icon>
                     <lightning-vertical-navigation-item-icon label="Setup Audit Trail" name="setup_audit_trail" icon-name="utility:variation_attribute_setup"></lightning-vertical-navigation-item-icon>
@@ -69,6 +70,9 @@
                     </template>
                     <template lwc:elseif={showTechincalHealth}>
                         <c-techincal-health></c-techincal-health>
+                    </template>
+                    <template lwc:elseif={showCommandConsole}>
+                        <c-admin-command-console></c-admin-command-console>
                     </template>
                     <template lwc:else>
                         Select a Proper Navigation option.
