@@ -31,6 +31,10 @@
         </template>
 
         <!-- Calendar Grid -->
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </template>
+
         <div class="calendar-grid">
             <!-- Day Names Header -->
             <div class="day-name">Sun</div>
@@ -48,7 +52,7 @@
                     <template if:true={day.events}>
                          <div class="events-container">
                             <template for:each={day.events} for:item="event">
-                                <div key={event.Id} class="event-chip" title={event.Subject} onclick={handleEventClick} data-id={event.Id}>
+                                <div key={event.Id} class={event.cssClass} title={event.Description} onclick={handleEventClick} data-id={event.Id}>
                                     {event.Subject}
                                 </div>
                             </template>
@@ -72,11 +76,15 @@
                 </div>
                 <div class="slds-modal__content slds-var-p-around_medium" id="modal-content-id-1">
                     <lightning-input label="Subject" value={newEvent.Subject} onchange={handleInputChange} data-field="Subject" required></lightning-input>
+                    <lightning-combobox label="Event Type" value={newEvent.Type} options={typeOptions} onchange={handleInputChange} data-field="Type" required></lightning-combobox>
                     <lightning-input type="datetime" label="Start" value={newEvent.StartDateTime} onchange={handleInputChange} data-field="StartDateTime" required></lightning-input>
                     <lightning-input type="datetime" label="End" value={newEvent.EndDateTime} onchange={handleInputChange} data-field="EndDateTime" required></lightning-input>
                     <lightning-textarea label="Description" value={newEvent.Description} onchange={handleInputChange} data-field="Description"></lightning-textarea>
                 </div>
                 <div class="slds-modal__footer">
+                    <template if:true={isExistingEvent}>
+                        <lightning-button label="Delete" variant="destructive" onclick={handleDeleteEvent} class="slds-float_left"></lightning-button>
+                    </template>
                     <lightning-button label="Cancel" onclick={closeModal} class="slds-var-m-right_small"></lightning-button>
                     <lightning-button label="Save" variant="brand" onclick={handleSaveEvent}></lightning-button>
                 </div>

@@ -58,7 +58,7 @@
 }
 
 .event-chip {
-    background-color: #0176d3;
+    background-color: #0176d3; /* Default Blue */
     color: white;
     font-size: 0.7rem;
     padding: 2px 4px;
@@ -66,4 +66,27 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-bottom: 2px;
+    transition: filter 0.2s;
+}
+
+.event-chip:hover {
+    filter: brightness(1.1);
+}
+
+.chip-maintenance {
+    background-color: #ff9a3c; /* Orange */
+}
+
+.chip-freeze {
+    background-color: #ba0517; /* Red */
+}
+
+.chip-refresh {
+    background-color: #2e844a; /* Green */
+}
+
+.chip-critical {
+    background-color: #000;
+    border: 1px solid red;
 }

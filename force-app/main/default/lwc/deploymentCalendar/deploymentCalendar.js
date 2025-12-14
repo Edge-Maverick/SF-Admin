@@ -10,6 +10,16 @@ const MONTH_NAMES = [
     "July", "August", "September", "October", "November", "December"
 ];
 
+import deleteEvent from '@salesforce/apex/DeploymentCalendarController.deleteEvent';
+
+const EVENT_TYPES = [
+    { label: 'Deployment', value: 'Deployment' },
+    { label: 'Maintenance', value: 'Maintenance' },
+    { label: 'Refresh', value: 'Refresh' },
+    { label: 'Freeze', value: 'Freeze' },
+    { label: 'Critical', value: 'Critical' }
+];
+
 export default class DeploymentCalendar extends LightningElement {
     @track currentDate = new Date();
     @track calendarDays = [];
@@ -18,11 +28,21 @@ export default class DeploymentCalendar extends LightningElement {
         Subject: '[DevOps] ',
         StartDateTime: '',
         EndDateTime: '',
-        Description: ''
+        Description: '',
+        Type: 'Deployment'
     };
     @track isModalOpen = false;
     @track upcomingEvents = [];
     @track hasAlert = true;
+    @track isLoading = false;
+
+    get typeOptions() {
+        return EVENT_TYPES;
+    }
+
+    get isExistingEvent() {
+        return !!this.newEvent.Id;
+    }
 
     connectedCallback() {
         this.generateCalendar();
@@ -49,12 +69,15 @@ export default class DeploymentCalendar extends LightningElement {
 
     @wire(getMonthEvents, { month: '$currentMonthNumber', year: '$currentYearNumber' })
     wiredEvents(result) {
+        this.isLoading = true;
         this.wiredEventsResult = result;
         const { error, data } = result;
         if (data) {
             this.mapEventsToCurrentCalendar(data);
+            this.isLoading = false;
         } else if (error) {
             console.error('Error fetching month events', error);
+            this.isLoading = false;
         }
     }
 
@@ -161,13 +184,34 @@ export default class DeploymentCalendar extends LightningElement {
             
             if(daysMap[dateStr]) {
                 if (!daysMap[dateStr].events) daysMap[dateStr].events = [];
-                // Add extended props for easier handling if needed, or just use raw event
-                daysMap[dateStr].events.push(evt);
+                
+                // Assign CSS class based on Type OR subject keyword
+                const cssClass = this.getEventClass(evt);
+                
+                // Add extended props
+                daysMap[dateStr].events.push({
+                    ...evt,
+                    cssClass: cssClass
+                });
             }
         });
         
         // Trigger re-render
         this.calendarDays = [...this.calendarDays];
+        this.isLoading = false;
+    }
+
+    getEventClass(evt) {
+        // Use Type if available, otherwise fallback to subject
+        let key = evt.Type || evt.Subject || '';
+        const lowerKey = key.toLowerCase();
+        
+        if (lowerKey.includes('maintenance')) return 'event-chip chip-maintenance';
+        if (lowerKey.includes('freeze')) return 'event-chip chip-freeze';
+        if (lowerKey.includes('refresh')) return 'event-chip chip-refresh';
+        if (lowerKey.includes('critical')) return 'event-chip chip-critical';
+        
+        return 'event-chip'; // Default Blue (Deployment)
     }
 
     handleDayClick(event) {
@@ -180,7 +224,8 @@ export default class DeploymentCalendar extends LightningElement {
                 // Set default start time to that day at 9 AM
                 StartDateTime: `${dateStr}T09:00:00.000Z`,
                 EndDateTime: `${dateStr}T10:00:00.000Z`,
-                Description: ''
+                Description: '',
+                Type: 'Deployment'
             };
             this.openModal();
         }
@@ -205,7 +250,8 @@ export default class DeploymentCalendar extends LightningElement {
                 Subject: clickedEvent.Subject,
                 StartDateTime: clickedEvent.StartDateTime,
                 EndDateTime: clickedEvent.EndDateTime,
-                Description: clickedEvent.Description || ''
+                Description: clickedEvent.Description || '',
+                Type: clickedEvent.Type || 'Deployment'
             };
             this.openModal();
         }
@@ -230,7 +276,8 @@ export default class DeploymentCalendar extends LightningElement {
             subject: this.newEvent.Subject,
             startDateTime: this.newEvent.StartDateTime,
             endDateTime: this.newEvent.EndDateTime,
-            description: this.newEvent.Description
+            description: this.newEvent.Description,
+            eventType: this.newEvent.Type
         })
         .then(() => {
             this.dispatchEvent(
@@ -252,5 +299,33 @@ export default class DeploymentCalendar extends LightningElement {
                 })
             );
         });
+    }
+
+    handleDeleteEvent() {
+        if (!this.newEvent.Id) return;
+        
+        this.isLoading = true;
+        deleteEvent({ eventId: this.newEvent.Id })
+            .then(() => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Success',
+                        message: 'Event deleted',
+                        variant: 'success'
+                    })
+                );
+                this.closeModal();
+                return refreshApex(this.wiredEventsResult);
+            })
+            .catch(error => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Error deleting event',
+                        message: error.body ? error.body.message : error.message,
+                        variant: 'error'
+                    })
+                );
+                this.isLoading = false;
+            });
     }
 }
