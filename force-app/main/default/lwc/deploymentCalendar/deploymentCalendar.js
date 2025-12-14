@@ -1,7 +1,7 @@
 import { LightningElement, track, wire } from 'lwc';
 import getMonthEvents from '@salesforce/apex/DeploymentCalendarController.getMonthEvents';
 import getUpcomingEvents from '@salesforce/apex/DeploymentCalendarController.getUpcomingEvents';
-import createEvent from '@salesforce/apex/DeploymentCalendarController.createEvent';
+import saveEvent from '@salesforce/apex/DeploymentCalendarController.saveEvent';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
 
@@ -14,6 +14,7 @@ export default class DeploymentCalendar extends LightningElement {
     @track currentDate = new Date();
     @track calendarDays = [];
     @track newEvent = {
+        Id: null,
         Subject: '[DevOps] ',
         StartDateTime: '',
         EndDateTime: '',
@@ -159,6 +160,8 @@ export default class DeploymentCalendar extends LightningElement {
             const dateStr = `${startDate.getFullYear()}-${String(startDate.getMonth()+1).padStart(2,'0')}-${String(startDate.getDate()).padStart(2,'0')}`;
             
             if(daysMap[dateStr]) {
+                if (!daysMap[dateStr].events) daysMap[dateStr].events = [];
+                // Add extended props for easier handling if needed, or just use raw event
                 daysMap[dateStr].events.push(evt);
             }
         });
@@ -170,9 +173,40 @@ export default class DeploymentCalendar extends LightningElement {
     handleDayClick(event) {
         const dateStr = event.currentTarget.dataset.date;
         if(dateStr) {
-            // Set default start time to that day at 9 AM
-            this.newEvent.StartDateTime = `${dateStr}T09:00:00.000Z`;
-            this.newEvent.EndDateTime = `${dateStr}T10:00:00.000Z`;
+            // Reset to new event state
+            this.newEvent = {
+                Id: null,
+                Subject: '[DevOps] ',
+                // Set default start time to that day at 9 AM
+                StartDateTime: `${dateStr}T09:00:00.000Z`,
+                EndDateTime: `${dateStr}T10:00:00.000Z`,
+                Description: ''
+            };
+            this.openModal();
+        }
+    }
+
+    handleEventClick(event) {
+        event.stopPropagation(); // Prevent bubbling to day click
+        const eventId = event.currentTarget.dataset.id;
+        
+        // Find the event in the calendar data
+        let clickedEvent = null;
+        for (const day of this.calendarDays) {
+            if (day.events) {
+                clickedEvent = day.events.find(e => e.Id === eventId);
+                if (clickedEvent) break;
+            }
+        }
+
+        if (clickedEvent) {
+             this.newEvent = {
+                Id: clickedEvent.Id,
+                Subject: clickedEvent.Subject,
+                StartDateTime: clickedEvent.StartDateTime,
+                EndDateTime: clickedEvent.EndDateTime,
+                Description: clickedEvent.Description || ''
+            };
             this.openModal();
         }
     }
@@ -191,7 +225,8 @@ export default class DeploymentCalendar extends LightningElement {
     }
 
     handleSaveEvent() {
-        createEvent({
+        saveEvent({
+            eventId: this.newEvent.Id,
             subject: this.newEvent.Subject,
             startDateTime: this.newEvent.StartDateTime,
             endDateTime: this.newEvent.EndDateTime,
@@ -201,20 +236,17 @@ export default class DeploymentCalendar extends LightningElement {
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Success',
-                    message: 'Event created',
+                    message: this.newEvent.Id ? 'Event updated' : 'Event created',
                     variant: 'success'
                 })
             );
             this.closeModal();
-            // Refresh logic - ideally we'd refresh the wired result
-            // returning to basic view for now or forcing refresh in production
-            // For now, let's just wait for wire to refresh naturally or user action
              return refreshApex(this.wiredEventsResult);
         })
         .catch(error => {
             this.dispatchEvent(
                 new ShowToastEvent({
-                    title: 'Error creating event',
+                    title: 'Error saving event',
                     message: error.body ? error.body.message : error.message,
                     variant: 'error'
                 })

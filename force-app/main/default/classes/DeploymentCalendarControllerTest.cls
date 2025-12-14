@@ -43,15 +43,21 @@ public class DeploymentCalendarControllerTest {
     }
     
     @isTest
-    static void testCreateEvent() {
+    static void testSaveEvent() {
         DateTime startDt = DateTime.now().addDays(1);
         DateTime endDt = startDt.addHours(1);
         
         Test.startTest();
-        Event e = DeploymentCalendarController.createEvent('New Event', startDt, endDt, 'Desc');
-        Test.stopTest();
-        
+        // Test Create
+        Event e = DeploymentCalendarController.saveEvent(null, 'New Event', startDt, endDt, 'Desc');
         System.assertNotEquals(null, e.Id);
         System.assertEquals('New Event', e.Subject);
+        
+        // Test Update
+        Event updatedE = DeploymentCalendarController.saveEvent(e.Id, 'Updated Event', startDt, endDt, 'Desc');
+        Test.stopTest();
+        
+        Event dbEvent = [SELECT Subject FROM Event WHERE Id = :e.Id];
+        System.assertEquals('Updated Event', dbEvent.Subject);
     }
 }

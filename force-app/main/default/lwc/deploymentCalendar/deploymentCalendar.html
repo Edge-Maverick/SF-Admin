@@ -48,7 +48,7 @@
                     <template if:true={day.events}>
                          <div class="events-container">
                             <template for:each={day.events} for:item="event">
-                                <div key={event.Id} class="event-chip" title={event.Subject}>
+                                <div key={event.Id} class="event-chip" title={event.Subject} onclick={handleEventClick} data-id={event.Id}>
                                     {event.Subject}
                                 </div>
                             </template>

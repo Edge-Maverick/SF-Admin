@@ -1,18 +1,23 @@
 public with sharing class DeploymentCalendarController {
     
     @AuraEnabled
-    public static Event createEvent(String subject, DateTime startDateTime, DateTime endDateTime, String description) {
+    public static Event saveEvent(String eventId, String subject, DateTime startDateTime, DateTime endDateTime, String description) {
         try {
-            Event newEvent = new Event(
+            Event eventToSave = new Event(
                 Subject = subject,
                 StartDateTime = startDateTime,
                 EndDateTime = endDateTime,
                 Description = description
             );
-            insert newEvent;
-            return newEvent;
+            
+            if (String.isNotBlank(eventId)) {
+                eventToSave.Id = eventId;
+            }
+            
+            upsert eventToSave;
+            return eventToSave;
         } catch (Exception e) {
-            throw new AuraHandledException('Error creating event: ' + e.getMessage());
+            throw new AuraHandledException('Error saving event: ' + e.getMessage());
         }
     }
 
