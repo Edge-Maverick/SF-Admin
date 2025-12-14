@@ -45,11 +45,14 @@ export default class OrgHorizon extends LightningElement {
     @track theme = 0;
     get customThemeStyling() {
         const customtheme = THEMES[this.theme];
-        return `
-            --color: ${customtheme.color}; 
-            --font-family: ${customtheme.fontFamily}; 
-            --font-style: ${customtheme.fontStyle};
-        `;
+        return `--color: ${customtheme.color}; --font-family: ${customtheme.fontFamily}; --font-style: ${customtheme.fontStyle};`;
+    }
+
+    renderedCallback() {
+        const div = this.template.querySelector('.org-horizon-main');
+        if (div) {
+            div.style.cssText = this.customThemeStyling;
+        }
     }
 
     async connectedCallback(){
