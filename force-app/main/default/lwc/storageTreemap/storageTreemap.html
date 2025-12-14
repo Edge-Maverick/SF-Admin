@@ -1,0 +1,66 @@
+<template>
+    <div class="container">
+        <!-- Header: Global Limits -->
+        <div class="limits-header">
+            <div class="limit-card">
+                <div class="limit-title">Data Storage</div>
+                <div class="limit-bar-container">
+                    <div class="limit-bar" data-style={dataStorage.style}></div>
+                </div>
+                <div class="limit-stats">
+                    <span>{dataStorage.formattedValue} used</span>
+                    <span>{dataStorage.formattedUsage}</span>
+                    <span>{dataStorage.formattedLimit}</span>
+                </div>
+            </div>
+            
+            <div class="limit-card">
+                <div class="limit-title">File Storage</div>
+                <div class="limit-bar-container">
+                    <div class="limit-bar" data-style={fileStorage.style}></div>
+                </div>
+                <div class="limit-stats">
+                    <span>{fileStorage.formattedValue} used</span>
+                    <span>{fileStorage.formattedUsage}</span>
+                    <span>{fileStorage.formattedLimit}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Body: Treemap -->
+        <div class="treemap-container">
+            <template if:true={isLoading}>
+                <div class="loading-spinner">
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+            </template>
+            
+            <template if:false={isLoading}>
+                <template if:true={treemapItems.length}>
+                    <div class="treemap-wrapper">
+                        <template for:each={treemapItems} for:item="item">
+                            <div key={item.apiName} class={item.class} data-style={item.style} title={item.label} onclick={handleItemClick} data-name={item.apiName}>
+                                <div class="item-content">
+                                    <span class="item-label">{item.label}</span>
+                                    <span class="item-count">{item.formattedCount}</span>
+                                    <span class="item-pct">{item.percentage}%</span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+                <template if:false={treemapItems.length}>
+                    <div class="empty-state">
+                        <p>No storage usage data found or all counts are zero.</p>
+                    </div>
+                </template>
+            </template>
+
+            <template if:true={error}>
+                <div class="error-state">
+                    <p>Error loading storage data: {error.body.message}</p>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

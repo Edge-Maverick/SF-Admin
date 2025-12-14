@@ -6,15 +6,10 @@
                 <div class="slds-media slds-media_center">
                     <div class="slds-media__figure">
                         <lightning-icon icon-name="standard:variation_attribute_setup" size="large" alternative-text="Setup Audit Trail" title="Setup Audit Trail"></lightning-icon>
-                        <!--span class="slds-icon_container slds-icon-standard-record" title="Setup Audit Trail">
-                            <svg class="slds-icon slds-page-header__icon" aria-hidden="true">
-                                <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#setup"></use>
-                            </svg>
-                        </span-->
                     </div>
                     <div class="slds-media__body">
                         <h1 class="slds-page-header__title" title="Setup Audit Trail">Setup Audit Trail</h1>
-                        <p class="slds-text-body_small">Track recent setup changes</p>
+                        <p class="slds-text-body_small">Track recent setup changes (Max 7 days)</p>
                     </div>
                 </div>
                 <div class="actions slds-grid slds-grid_vertical-align-center">
@@ -69,6 +64,14 @@
             </div>
         </div>
 
+        <!-- Error Message Banner -->
+        <template lwc:if={error}>
+            <div class="slds-notify slds-notify_alert slds-theme_error" role="alert">
+                <span class="slds-assistive-text">error</span>
+                <h2>{error}</h2>
+            </div>
+        </template>
+
         <!-- Loading State -->
         <template lwc:if={isLoading}>
             <div class="slds-var-p-around_medium">
@@ -122,17 +125,17 @@
                                             </thead>
                                             <tbody>
                                                 <template for:each={group.items} for:item="log">
-                                                    <tr key={log.Id} class={log.rowClass}>
+                                                    <tr key={log.id} class={log.rowClass}>
                                                         <td data-label="Action">
-                                                            <div class="slds-truncate action-cell" title={log.Action}>
-                                                                {log.Action}
+                                                            <div class="slds-truncate action-cell" title={log.action}>
+                                                                {log.action}
                                                             </div>
                                                         </td>
                                                         <td data-label="Details" class="slds-cell-wrap">
-                                                            <div title={log.Display}>{log.Display}</div>
+                                                            <div title={log.display}>{log.display}</div>
                                                         </td>
                                                         <td data-label="User">
-                                                            <div class="slds-truncate" title={log.CreatedByName}>{log.CreatedByName}</div>
+                                                            <div class="slds-truncate" title={log.createdByName}>{log.createdByName}</div>
                                                         </td>
                                                         <td data-label="Date">
                                                             <div class="slds-truncate" title={log.formattedDate}>{log.formattedDate}</div>
@@ -146,6 +149,32 @@
                             </div>
                         </template>
                     </lightning-accordion>
+
+                    <!-- Load More Button -->
+                    <template lwc:if={hasMoreData}>
+                        <div class="slds-var-m-vertical_medium slds-text-align_center">
+                             <lightning-button 
+                                label="Load More" 
+                                title="Load more logs" 
+                                onclick={loadMore} 
+                                variant="brand-outline" 
+                                disabled={isLoadingMore}
+                                icon-name="utility:download">
+                            </lightning-button>
+                            <template lwc:if={isLoadingMore}>
+                                <div class="slds-is-relative slds-var-p-top_small">
+                                    <lightning-spinner alternative-text="Loading" size="small" variant="brand"></lightning-spinner>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template lwc:elseif={isLoadingMore}>
+                        <!-- Spinner for load more if no button (edge case) -->
+                         <div class="slds-is-relative slds-var-p-around_large">
+                            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                        </div>
+                    </template>
+
                 </div>
             </template>
             

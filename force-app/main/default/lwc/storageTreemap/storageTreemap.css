@@ -1,0 +1,162 @@
+:host {
+    --glass-bg: rgba(30, 41, 59, 0.7); 
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-indigo: #6366f1;
+}
+
+.container {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    color: var(--text-primary);
+}
+
+/* Limits Header */
+.limits-header {
+    display: flex;
+    gap: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.limit-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.limit-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+}
+
+.limit-bar-container {
+    height: 8px; /* Thinner for modern look */
+    background: rgba(255, 255, 255, 0.05); /* Very subtle track */
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.limit-bar {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.5s ease-out;
+    /* Gradient for the bar */
+    background: linear-gradient(90deg, #6366f1, #818cf8);
+}
+
+.limit-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Treemap Body */
+.treemap-container {
+    flex: 1;
+    min-height: 400px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px; /* Clean corners */
+    /* Remove background, let items sit on glass */
+}
+
+.treemap-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 100%;
+    align-content: flex-start;
+}
+
+.treemap-item {
+    padding: 1rem;
+    margin: 1px; /* Thinner gaps */
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    transition: transform 0.2s, filter 0.2s;
+    cursor: default;
+    overflow: hidden;
+    position: relative;
+    
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.treemap-item:hover {
+    transform: scale(1.01);
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    filter: brightness(1.1);
+}
+
+.item-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    pointer-events: none; 
+}
+
+.item-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.item-count {
+    font-weight: 500;
+    font-family: 'Inter', sans-serif; /* Cleaner than monospace */
+    opacity: 0.9;
+}
+
+.item-pct {
+    font-size: 0.7em;
+    opacity: 0.8;
+}
+
+.empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.error-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #ef4444; 
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

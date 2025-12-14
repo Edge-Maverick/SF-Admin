@@ -1,0 +1,42 @@
+<template>
+    <div class="custom-card" style="">
+        <lightning-tabset variant="standard" active-tab-value={selectedCategory}>
+            <lightning-tab label="All" value="all" onactive={handleCategorySelect}>
+            </lightning-tab>
+            <template lwc:if={lstCategories}>
+                <template for:each={lstCategories} for:item="category">
+                    <lightning-tab key={category} label={category} value={category} onactive={handleCategorySelect}>
+                    </lightning-tab>
+                </template>
+            </template>
+        </lightning-tabset>
+        <div>
+            <template lwc:if={prepData}>
+                <div class="slds-scrollable plot-container-card">
+                    <div class="plot-container-ul slds-text-align_center" style="width:100%;" lwc:dom="manual"></div>
+                </div>
+                <template lwc:if={showTable}>
+                <div style="height:400px;" class="plot-container-card">
+                    <lightning-datatable
+                        key-field="label"
+                        data={prepData}
+                        hide-checkbox-column
+                        wrap-text-max-lines=1
+                        wrap-table-header="all"
+                        columns={tableColumns}
+                        resize-column-disabled
+                        min-column-width="80"
+                        column-widths-mode="auto">
+                    </lightning-datatable>
+                </div>
+                </template>
+            </template>
+            <template lwc:else>
+                <div class="slds-text-align_center" style="width: 100%;">
+                    <lightning-spinner size="small"></lightning-spinner>
+                    Graph is loading...
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

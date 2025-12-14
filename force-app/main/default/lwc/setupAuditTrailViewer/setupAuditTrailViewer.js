@@ -1,4 +1,5 @@
 import { LightningElement, track } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getSetupAuditTrailLogs from '@salesforce/apex/SetupAuditTrailController.getSetupAuditTrailLogs';
 
 export default class SetupAuditTrailViewer extends LightningElement {
@@ -6,6 +7,7 @@ export default class SetupAuditTrailViewer extends LightningElement {
     @track endDate;
     @track groupedLogs = [];
     @track isLoading = false;
+    @track isLoadingMore = false; // Separate spinner for "Load More"
     @track error;
     
     @track sectionOptions = [];
@@ -13,12 +15,15 @@ export default class SetupAuditTrailViewer extends LightningElement {
     @track activeSections = [];
     @track showCriticalOnly = false;
     @track searchTerm = '';
-    @track isFilterOpen = true; // Default open for visibility
+    @track isFilterOpen = true;
     
+    // Pagination tracking
     rawLogs = []; 
+    hasMoreData = false;
+    _fetchTimeout; // For debouncing
 
     get skeletonItems() {
-        return [1, 2, 3]; // Fewer items for groups
+        return [1, 2, 3];
     }
 
     get filterDrawerClass() {
@@ -32,39 +37,33 @@ export default class SetupAuditTrailViewer extends LightningElement {
     connectedCallback() {
         // Default to last 7 days
         this.setDateRange(7);
-        this.fetchLogs();
+        this.fetchLogs(true); // Initial fetch
     }
 
     setDateRange(days) {
         const end = new Date();
         const start = new Date();
-        if (days === '24h') {
-             start.setDate(end.getDate() - 1); // Exact 24h logic could be precise, but day-based is usually fine for audit logs
-        } else {
-             start.setDate(end.getDate() - days);
-        }
+        start.setDate(end.getDate() - days);
         
         this.endDate = end.toISOString().slice(0, 10);
         this.startDate = start.toISOString().slice(0, 10);
     }
 
+    // --- Filter Handlers (Debounced) ---
+
     handleStartDateChange(event) {
         this.startDate = event.target.value;
+        this.debouncedFetch();
     }
 
     handleEndDateChange(event) {
         this.endDate = event.target.value;
+        this.debouncedFetch();
     }
 
     handleSearchChange(event) {
         this.searchTerm = event.target.value;
-        this.filterLogs();
-    }
-
-
-
-    toggleFilterDrawer() {
-        this.isFilterOpen = !this.isFilterOpen;
+        this.filterLogs(); // Client-side filter only, no need to fetch
     }
 
     handleSectionChange(event) {
@@ -77,41 +76,131 @@ export default class SetupAuditTrailViewer extends LightningElement {
         this.filterLogs();
     }
 
+    toggleFilterDrawer() {
+        this.isFilterOpen = !this.isFilterOpen;
+    }
+
     handleRefresh() {
-        this.fetchLogs();
+        this.fetchLogs(true);
     }
 
     handleClearFilters() {
         this.selectedSection = 'All';
         this.showCriticalOnly = false;
-        this.setDateRange(7); // Reset to default 7 days
-        this.fetchLogs();
+        this.searchTerm = '';
+        this.setDateRange(7);
+        this.fetchLogs(true);
     }
 
-    get isFilterDisabled() {
-        return !this.sectionOptions || this.sectionOptions.length === 0;
-    }
+    // --- Validation ---
 
-    fetchLogs() {
-        this.isLoading = true;
+    validateDateRange() {
+        const start = new Date(this.startDate);
+        const end = new Date(this.endDate);
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+
+        if (diffDays > 7) {
+            this.showToast('Error', 'Date range cannot exceed 7 days.', 'error');
+            this.error = 'Date range cannot exceed 7 days.';
+            return false;
+        }
+        if (start > end) {
+             this.showToast('Error', 'Start Date cannot be after End Date.', 'error');
+             this.error = 'Start Date cannot be after End Date.';
+             return false;
+        }
         this.error = undefined;
-        this.groupedLogs = [];
-        this.sectionOptions = [];
-        this.selectedSection = 'All';
+        return true;
+    }
 
-        getSetupAuditTrailLogs({ startDate: this.startDate, endDate: this.endDate })
-            .then(result => {
-                this.rawLogs = result || [];
+    showToast(title, message, variant) {
+        const event = new ShowToastEvent({
+            title: title,
+            message: message,
+            variant: variant,
+        });
+        this.dispatchEvent(event);
+    }
+
+    // --- Data Fetching ---
+
+    debouncedFetch() {
+        // Clear existing timeout
+        if (this._fetchTimeout) {
+            clearTimeout(this._fetchTimeout);
+        }
+        // Set new timeout (500ms debounce)
+        this._fetchTimeout = setTimeout(() => {
+            this.fetchLogs(true);
+        }, 800);
+    }
+
+    loadMore() {
+        this.fetchLogs(false);
+    }
+
+    fetchLogs(reset = false) {
+        if (!this.validateDateRange()) {
+            this.groupedLogs = [];
+            return;
+        }
+
+        if (reset) {
+            this.isLoading = true;
+            this.rawLogs = [];
+            this.groupedLogs = [];
+        } else {
+            this.isLoadingMore = true;
+        }
+        
+        // Prepare Pagination Params
+        let lastCreatedDate = null;
+        let lastId = null;
+
+        if (!reset && this.rawLogs.length > 0) {
+            const lastLog = this.rawLogs[this.rawLogs.length - 1];
+            lastCreatedDate = lastLog.createdDate;
+            lastId = lastLog.id;
+        }
+
+        getSetupAuditTrailLogs({ 
+            request: {
+                startDate: this.startDate, 
+                endDate: this.endDate,
+                lastCreatedDate: lastCreatedDate,
+                lastId: lastId
+            }
+        })
+        .then(result => {
+            if (result && result.length > 0) {
+                // Append or Set
+                if (reset) {
+                    this.rawLogs = result;
+                } else {
+                    this.rawLogs = [...this.rawLogs, ...result];
+                }
+                
+                // If we got exactly 1000 records, there are likely more.
+                this.hasMoreData = result.length === 1000;
+                
                 this.processLogs();
-                setTimeout(() => {
-                    this.isLoading = false;
-                }, 400);
-            })
-            .catch(error => {
-                this.error = error.body ? error.body.message : error.message;
-                this.isLoading = false;
-                console.error('Error fetching logs:', error);
-            });
+            } else {
+                this.hasMoreData = false;
+                if (reset) {
+                    this.groupedLogs = [];
+                    this.sectionOptions = [];
+                }
+            }
+        })
+        .catch(error => {
+            this.error = error.body ? error.body.message : error.message;
+            this.showToast('Error fetching logs', this.error, 'error');
+        })
+        .finally(() => {
+            this.isLoading = false;
+            this.isLoadingMore = false;
+        });
     }
 
     processLogs() {
@@ -121,16 +210,20 @@ export default class SetupAuditTrailViewer extends LightningElement {
             return;
         }
 
+        // Extract Sections for Filter Dropdown
         const sections = new Set();
         this.rawLogs.forEach(log => {
-            sections.add(log.Section || 'Other');
+            sections.add(log.section || 'Other');
         });
 
-        const options = [{ label: 'All Sections', value: 'All' }];
-        Array.from(sections).sort().forEach(section => {
-            options.push({ label: section, value: section });
-        });
-        this.sectionOptions = options;
+        // Only rebuild options if it's a fresh fetch or options list grew
+        if (this.sectionOptions.length <= 1 || sections.size > (this.sectionOptions.length - 1)) {
+            const options = [{ label: 'All Sections', value: 'All' }];
+            Array.from(sections).sort().forEach(section => {
+                options.push({ label: section, value: section });
+            });
+            this.sectionOptions = options;
+        }
 
         this.filterLogs();
     }
@@ -140,21 +233,21 @@ export default class SetupAuditTrailViewer extends LightningElement {
         
         this.rawLogs.forEach(log => {
             // Level 1: Filter by Critical Toggle
-            if (this.showCriticalOnly && !this.isCritical(log.Action)) {
-                return; // Skip non-critical if toggle is on
+            if (this.showCriticalOnly && !this.isCritical(log.action)) {
+                return; 
             }
 
             // Level 2: Filter by Section
-            const section = log.Section || 'Other';
+            const section = log.section || 'Other';
             if (this.selectedSection === 'All' || this.selectedSection === section) {
                 
                 // Level 3: Text Search
                 if (this.searchTerm) {
                     const term = this.searchTerm.toLowerCase();
-                    const match = (log.Action && log.Action.toLowerCase().includes(term)) ||
-                                  (log.Display && log.Display.toLowerCase().includes(term)) ||
-                                  (log.CreatedByName && log.CreatedByName.toLowerCase().includes(term));
-                    if (!match) return; // Skip if no match
+                    const match = (log.action && log.action.toLowerCase().includes(term)) ||
+                                  (log.display && log.display.toLowerCase().includes(term)) ||
+                                  (log.createdByName && log.createdByName.toLowerCase().includes(term));
+                    if (!match) return; 
                 }
 
                 if (!groups[section]) {
@@ -167,12 +260,12 @@ export default class SetupAuditTrailViewer extends LightningElement {
         this.groupedLogs = Object.keys(groups).map(section => {
             const items = groups[section].map(log => ({
                 ...log,
-                formattedDate: this.formatDate(new Date(log.CreatedDate)),
-                rowClass: this.getRowClass(log.Action)
+                formattedDate: this.formatDate(new Date(log.createdDate)),
+                rowClass: this.getRowClass(log.action)
             }));
             
             const totalCount = items.length;
-            const criticalCount = items.filter(i => this.isCritical(i.Action)).length;
+            const criticalCount = items.filter(i => this.isCritical(i.action)).length;
             const hasCritical = criticalCount > 0;
             
             return {
@@ -195,14 +288,16 @@ export default class SetupAuditTrailViewer extends LightningElement {
             return a.section.localeCompare(b.section);
         });
 
-        // Open active sections
-        this.activeSections = this.groupedLogs
+        // Open active sections if not already set by user interaction
+        if (this.activeSections.length === 0 && this.groupedLogs.length > 0) {
+             this.activeSections = this.groupedLogs
             .filter(g => g.hasCritical)
             .map(g => g.section);
-         
-         if (this.activeSections.length === 0 && this.groupedLogs.length > 0) {
-             this.activeSections = [this.groupedLogs[0].section];
-         }
+            
+            if (this.activeSections.length === 0) {
+                 this.activeSections = [this.groupedLogs[0].section];
+            }
+        }
     }
 
     formatDate(date) {
@@ -211,8 +306,6 @@ export default class SetupAuditTrailViewer extends LightningElement {
             hour: '2-digit', minute: '2-digit' 
         });
     }
-
-
 
     isCritical(action) {
         if (!action) return false;

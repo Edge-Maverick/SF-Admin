@@ -1,0 +1,83 @@
+<template>
+    <div class="main-container">
+        <!-- Header Section -->
+        <div class="header-section slds-var-m-bottom_medium">
+            <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-spread">
+                <div class="slds-media slds-media_center">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name="custom:custom76" size="large" alternative-text="Login Forensics" title="Login Forensics"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <h1 class="slds-page-header__title" title="Login Forensics">Login Forensics</h1>
+                        <p class="slds-text-body_small">How is the Org login configuration ? How are users loging in to Org ? </p>
+                    </div>
+                </div>
+                <div class="actions slds-grid slds-grid_vertical-align-center">
+                    <lightning-button-icon icon-name="utility:refresh" onclick={handleRefresh} variant="border-filled"></lightning-button-icon>
+                </div>
+            </div>
+        </div>
+
+        <!--body section-->
+        <div class="secondary-header-section slds-var-m-bottom_medium">
+            <div class="custom-card">
+                <lightning-tabset variant="standard" active-tab-value="loginAnalysis">
+                    <lightning-tab label="Login Analysis" value="loginAnalysis">
+                        <div class="body-section">
+                            <template lwc:if={prepData}>
+                                <div class="slds-scrollable plot-container-card custom-card" style="height:500px;width:100%">
+                                    <div class="plot-container-ul slds-text-align_center" lwc:dom="manual"></div>
+                                </div>
+                                <div class="slds-scrollable plot-container-card custom-card" style="height:500px;width:100%">
+                                    <c-login-icicle-chart chart-data={prepData}></c-login-icicle-chart>
+                                </div>
+                            </template>
+                            <template lwc:else>
+                                Sorry no data to display.
+                            </template>
+                        </div>
+                    </lightning-tab>
+
+                    <lightning-tab label="Login Configuration" value="loginConfiguration">
+                        <template lwc:if={configData}>
+                            {configData}
+                            <div class="slds-box">
+                                <lightning-layout>
+                                    <lightning-layout-item>
+                                        GATEWAYS
+                                    </lightning-layout-item>
+                                    <lightning-layout-item>
+                                        UI Auth Paths & API Auth Paths
+                                    </lightning-layout-item>
+                                    <lightning-layout-item>
+                                        LOGIN POLICIES
+                                        - IP Ranges, 
+                                        - Login Hours,
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </div>
+                        </template>
+                        <template lwc:else>
+                            <div class="slds-box slds-theme_shade slds-theme_alert-texture">
+                                <p>Fetching Login Configuration utilizes API requests in the background, use the below button to request a login configuration analysis on need basis.</p>
+                                <lightning-button label="Fetch Config" class="slds-align_absolute-center" onclick={handleFetchConfig}></lightning-button>
+                                <template lwc:if={configDataError}>
+                                    <p>Error while fetching Login Configuration</p>
+                                </template>
+                                <template lwc:if={configDataLoading}>
+                                    <p>Loading the config.. .</p>
+                                    <lightning-dynamic-icon type="eq" option="play" alternative-text="Recording in progress"></lightning-dynamic-icon>
+                                </template>
+                            </div>
+                        </template>
+                    </lightning-tab>
+                </lightning-tabset>
+
+                
+                
+            </div>
+        </div>
+
+        
+    </div>
+</template>
