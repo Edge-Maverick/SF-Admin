@@ -1,0 +1,34 @@
+<template>
+    <template if:true={isVisible}>
+        <div class="terminal-overlay" onclick={handleOverlayClick}>
+            <div class={windowClass} onclick={handleWindowClick}>
+                <!-- Header -->
+                <div class="terminal-header">
+                    <div class="terminal-controls">
+                        <div class="control red" onclick={closeTerminal}></div>
+                        <div class="control yellow"></div>
+                        <div class="control green"></div>
+                    </div>
+                    <div class="terminal-title">admin@sf-org: ~</div>
+                </div>
+
+                <!-- Content -->
+                <div class="terminal-body" lwc:dom="manual">
+                    <!-- History lines will be injected here via JS to allow efficient scrolling/formatting -->
+                </div>
+
+                <!-- Input Area -->
+                <div class="terminal-input-line">
+                    <span class="prompt">➜  ~</span>
+                    <input type="text" 
+                           class="cmd-input" 
+                           onkeyup={handleKeyUp} 
+                           spellcheck="false" 
+                           autocomplete="off"
+                           autofocus
+                           placeholder="Type a command... (try 'help')">
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

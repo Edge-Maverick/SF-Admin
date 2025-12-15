@@ -47,3 +47,31 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Floating Action Button */
+.fab-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #0070d2, #005fb2);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 112, 210, 0.4);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1000;
+}
+
+.fab-container:hover {
+    transform: scale(1.1) translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 112, 210, 0.5);
+    background: linear-gradient(135deg, #005fb2, #004d91);
+}
+
+.fab-container:active {
+    transform: scale(0.95);
+}

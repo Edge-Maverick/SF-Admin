@@ -37,5 +37,12 @@
                 </div>
              </div>
         </div>
+    <!-- Terminal Integration -->
+        <c-admin-terminal></c-admin-terminal>
+        
+        <!-- Floating Action Button for Terminal -->
+        <div class="fab-container" onclick={handleTerminalOpen} title="Open Terminal (Ctrl+K)">
+            <lightning-icon icon-name="utility:prompt" alternative-text="Open Terminal" size="medium" variant="inverse"></lightning-icon>
+        </div>
     </div>
 </template>
