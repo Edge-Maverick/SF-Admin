@@ -1,4 +1,32 @@
-- name: Run Salesforce Code Analyzer
+name: Salesforce Code Analyzer
+
+# Triggers the action on push or pull request
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'force-app/**'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'force-app/**'
+  workflow_dispatch:
+
+jobs:
+  scan-code:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Salesforce Code Analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
           run-arguments: >
@@ -6,3 +34,16 @@
             --format sarif
             --outfile CodeAnalyzerResults.sarif
             --normalize-severity
+            # --config-file code-analyzer.yml  <-- Uncomment this only after you add the file to your repo
+
+      - name: Upload Scan Results Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: salesforce-code-analyzer-results
+          path: CodeAnalyzerResults.sarif
+
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: CodeAnalyzerResults.sarif
+          category: salesforce-code-analyzer
