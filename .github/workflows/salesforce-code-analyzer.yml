@@ -1,9 +1,9 @@
 - name: Run Salesforce Code Analyzer
-  uses: forcedotcom/run-code-analyzer@v2.6.0
+        uses: forcedotcom/run-code-analyzer@v2.6.0
         with:
           run-arguments: >
             --target ./force-app
             --format sarif
             --outfile CodeAnalyzerResults.sarif
-            --config-file code-analyzer.yml  # <--- ADD THIS LINE
+            --config-file code-analyzer.yml
             --normalize-severity
