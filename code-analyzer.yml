@@ -1,45 +1,41 @@
 # Salesforce Code Analyzer Configuration
-version: v1
+# (NOTE: "version: v1" was removed because it causes errors in v5)
 
 # 1. Global Settings
 log_folder: .sfdx/scanner/logs
 
 # 2. Rule Overrides
-# To "disable" a rule, we remove the "Recommended" tag from its list.
-# The scanner only runs rules that match your selector (usually "Recommended").
 rules:
   # --- PMD (Apex) Overrides ---
   pmd:
-    # Disable Variable Naming Conventions (e.g., standardizing on camelCase)
+    # Disable Variable Naming Conventions
     VariableNamingConventions:
-      severity: 5       # Demote to Info (1=Critical, 5=Info)
-      tags: ["Style"]   # REMOVED "Recommended" tag so it won't run by default
+      severity: 5       # Info
+      tags: ["Style"]   # Removed "Recommended"
 
     # Disable Method Naming Conventions
     MethodNamingConventions:
       severity: 5
       tags: ["Style"]
 
-    # Disable Formal Parameter Naming (method arguments)
+    # Disable Formal Parameter Naming
     FormalParameterNamingConventions:
       severity: 5
       tags: ["Style"]
 
-    # Example: Relaxing a complexity rule instead of removing it
+    # Relax Complexity Rule
     ExcessivePublicCount:
-      severity: 3       # Lower severity to Moderate (Warning)
-      tags: ["Recommended", "Complexity"] # Kept "Recommended", so this WILL run
+      severity: 3
+      tags: ["Recommended", "Complexity"]
 
   # --- ESLint (LWC/JS) Overrides ---
   eslint:
-    # Disable "no-console" if you allow console.log in your code
+    # Disable "no-console"
     no-console:
       severity: 5
       tags: ["Style"]
 
 # 3. Engine Configuration
-# You can also point to existing config files if you have them
 engines:
   eslint:
-    # Use your existing .eslintrc.json if you have one
     auto_discover_eslint_config: true
