@@ -23,7 +23,7 @@ jobs:
         uses: forcedotcom/run-code-analyzer@v2
         with:
           # WRITTEN AS ONE LINE TO PREVENT YAML ERRORS
-          run-arguments: --target ./force-app --format sarif --outfile CodeAnalyzerResults.sarif --normalize-severity --verbose
+          run-arguments: --target ./force-app/main --format sarif --outfile CodeAnalyzerResults.sarif --normalize-severity --verbose
 
       - name: Upload Scan Results Artifact
         if: always() # Run this even if the scan found violations
