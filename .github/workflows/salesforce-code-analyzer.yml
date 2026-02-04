@@ -25,8 +25,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: '>=20.9.0'
-      - name: Install Project Dependencies
-        run: npm ci
+     
       # FIX: Changed v5 to v4
       - name: Ensure java v11 or greater
         uses: actions/setup-java@v5
