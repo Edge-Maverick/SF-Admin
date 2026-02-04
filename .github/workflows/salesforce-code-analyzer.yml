@@ -1,6 +1,5 @@
 - name: Run Salesforce Code Analyzer
-        id: run-code-analyzer
-        uses: forcedotcom/run-code-analyzer@v2
+  uses: forcedotcom/run-code-analyzer@v2.6.0
         with:
           run-arguments: >
             --target ./force-app
