@@ -32,11 +32,16 @@ jobs:
           sf plugins install @salesforce/sfdx-scanner
 
       # 3. Run the Scanner DIRECTLY (Bypassing the buggy wrapper)
-      - name: Run Salesforce Scanner
-        run: |
+      #- name: Run Salesforce Scanner
+        #run: |
           # We run the command directly. 
           # Even if it prints warnings to the console, it will create the file correctly.
-          sf scanner run --target ./force-app --format sarif --outfile CodeAnalyzerResults.sarif
+          #sf scanner run --target ./force-app --format sarif --outfile CodeAnalyzerResults.sarif
+
+      - name: Run Salesforce Code Analyzer
+        uses: forcedotcom/run-code-analyzer@v2.6.0
+        with:
+              run-arguments: --target ./force-app --format sarif --outfile CodeAnalyzerResults.sarif
 
       # 4. Upload the results file so you can download it
       - name: Upload Scan Results Artifact
@@ -49,7 +54,7 @@ jobs:
       # 5. Show results in GitHub Security tab
       - name: Upload SARIF to GitHub
         if: success() || failure() # Upload even if the scanner found issues (which counts as "failure")
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: CodeAnalyzerResults.sarif
           category: salesforce-code-analyzer
