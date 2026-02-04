@@ -19,20 +19,36 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run Salesforce Code Analyzer
-        uses: forcedotcom/run-code-analyzer@v2
+      # 1. Setup Node.js (Required for Salesforce CLI)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          run-arguments: --target ./force-app --format sarif --outfile CodeAnalyzerResults.sarif
+          node-version: '20'
 
+      # 2. Install Salesforce CLI & Scanner Plugin
+      - name: Install Salesforce CLI & Scanner
+        run: |
+          npm install -g @salesforce/cli
+          sf plugins install @salesforce/sfdx-scanner
+
+      # 3. Run the Scanner DIRECTLY (Bypassing the buggy wrapper)
+      - name: Run Salesforce Scanner
+        run: |
+          # We run the command directly. 
+          # Even if it prints warnings to the console, it will create the file correctly.
+          sf scanner run --target ./force-app --format sarif --outfile CodeAnalyzerResults.sarif
+
+      # 4. Upload the results file so you can download it
       - name: Upload Scan Results Artifact
-        if: always()
+        if: always() # Run even if violations are found
         uses: actions/upload-artifact@v4
         with:
           name: salesforce-code-analyzer-results
           path: CodeAnalyzerResults.sarif
 
+      # 5. Show results in GitHub Security tab
       - name: Upload SARIF to GitHub
-        if: success()
+        if: success() || failure() # Upload even if the scanner found issues (which counts as "failure")
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: CodeAnalyzerResults.sarif
