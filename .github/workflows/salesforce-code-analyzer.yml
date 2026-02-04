@@ -29,9 +29,9 @@ jobs:
             echo "ERROR: force-app NOT FOUND. Do you use 'src' or another name?"
           fi
 
-      - name: Run Salesforce Code Analyzer
+     - name: Run Salesforce Code Analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          # Minimized arguments to reduce errors. 
-          # We removed '--outfile' so it defaults to the standard output to avoid path issues.
-          run-arguments: --target ./force-app --normalize-severity --verbose
+          # We removed --normalize-severity and --verbose
+          # This runs the standard scan which is most stable
+          run-arguments: --target ./force-app --format sarif --outfile CodeAnalyzerResults.sarif
