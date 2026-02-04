@@ -1,4 +1,4 @@
-name: Salesforce Code Analyzer Debug
+name: Salesforce Code Analyzer
 
 on:
   push:
@@ -8,30 +8,32 @@ on:
 jobs:
   scan-code:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # DEBUG STEP: This prints the folder structure to the logs
-      - name: Debug - List Files
-        run: |
-          echo "Current working directory:"
-          pwd
-          echo "Listing root files:"
-          ls -la
-          echo "Checking if force-app exists:"
-          if [ -d "./force-app" ]; then
-            echo "force-app FOUND"
-            ls -R force-app
-          else
-            echo "ERROR: force-app NOT FOUND. Do you use 'src' or another name?"
-          fi
-
-     - name: Run Salesforce Code Analyzer
+      - name: Run Salesforce Code Analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          # We removed --normalize-severity and --verbose
-          # This runs the standard scan which is most stable
           run-arguments: --target ./force-app --format sarif --outfile CodeAnalyzerResults.sarif
+
+      - name: Upload Scan Results Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: salesforce-code-analyzer-results
+          path: CodeAnalyzerResults.sarif
+
+      - name: Upload SARIF to GitHub
+        if: success()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: CodeAnalyzerResults.sarif
+          category: salesforce-code-analyzer
