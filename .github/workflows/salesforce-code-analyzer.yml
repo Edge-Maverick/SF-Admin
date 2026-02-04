@@ -1,60 +1,57 @@
-name: Salesforce Code Analyzer
-
+name: Salesforce Code Analyzer Workflow
 on:
-  push:
-    branches: [ main, master ]
-  workflow_dispatch:
-
+  pull_request:
 jobs:
-  scan-code:
-    runs-on: ubuntu-latest
+  salesforce-code-analyzer-workflow:
     permissions:
-      security-events: write
-      actions: read
-      contents: read
-
+      pull-requests: write # Grants permission to create a pull request review. Only necessary if running against pull requests.
+      contents: read # Grants permission to check out the repository. Only necessary for private repos.
+      actions: read # Grants permission to read the in-progress actions. Only necessary for private repos.
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v4
+      - name: Check out files
+        uses: actions/checkout@v5
+
+      # PREREQUISITES - Only needed if the runner doesn't already satisfy these requirements.
+      - name: Ensure node v20.9.0 or greater
+        uses: actions/setup-node@v5
         with:
-          fetch-depth: 0
-
-      # 1. Setup Node.js (Required for Salesforce CLI)
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+          node-version: '>=20.9.0'
+      - name: Ensure java v11 or greater
+        uses: actions/setup-java@v5
         with:
-          node-version: '20'
+          java-version: '>=11'
+          distribution: 'zulu'
+      - name: Ensure python v3.10 or greater
+        uses: actions/setup-python@v6
+        with:
+          python-version: '>=3.10'
 
-      # 2. Install Salesforce CLI & Scanner Plugin
-      - name: Install Salesforce CLI & Scanner
-        run: |
-          npm install -g @salesforce/cli
-          sf plugins install @salesforce/sfdx-scanner
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli@latest
 
-      # 3. Run the Scanner DIRECTLY (Bypassing the buggy wrapper)
-      #- name: Run Salesforce Scanner
-        #run: |
-          # We run the command directly. 
-          # Even if it prints warnings to the console, it will create the file correctly.
-          #sf scanner run --target ./force-app --format sarif --outfile CodeAnalyzerResults.sarif
+      - name: Install Latest Salesforce Code Analyzer CLI Plugin
+        run: sf plugins install code-analyzer@latest
 
       - name: Run Salesforce Code Analyzer
-        uses: forcedotcom/run-code-analyzer@v2.6.0
+        id: run-code-analyzer
+        uses: forcedotcom/run-code-analyzer@v2
         with:
-              run-arguments: --target ./force-app --format sarif --outfile CodeAnalyzerResults.sarif
+          run-arguments: --workspace . --view detail --output-file sfca_results.html --output-file sfca_results.json
+          results-artifact-name: salesforce-code-analyzer-results
 
-      # 4. Upload the results file so you can download it
-      - name: Upload Scan Results Artifact
-        if: always() # Run even if violations are found
-        uses: actions/upload-artifact@v4
-        with:
-          name: salesforce-code-analyzer-results
-          path: CodeAnalyzerResults.sarif
+      # Option 1: Quality gate on ALL files in the repository
+      - name: Fail on Critical/High Violations (All Files)
+        if: |
+          steps.run-code-analyzer.outputs.exit-code > 0 ||
+          steps.run-code-analyzer.outputs.num-sev1-violations > 0 ||
+          steps.run-code-analyzer.outputs.num-sev2-violations > 0 ||
+          steps.run-code-analyzer.outputs.num-violations > 10
+        run: exit 1
 
-      # 5. Show results in GitHub Security tab
-      - name: Upload SARIF to GitHub
-        if: success() || failure() # Upload even if the scanner found issues (which counts as "failure")
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: CodeAnalyzerResults.sarif
-          category: salesforce-code-analyzer
+      # Option 2: Quality gate on CHANGED files only (useful for legacy codebases)
+      - name: Fail on Critical/High Violations (Changed Files Only)
+        if: |
+          steps.run-code-analyzer.outputs.num-sev1-violations-in-changed-files > 0 ||
+          steps.run-code-analyzer.outputs.num-sev2-violations-in-changed-files > 0
+        run: exit 1
