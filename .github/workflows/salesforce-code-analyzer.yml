@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out files
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       # PREREQUISITES - Only needed if the runner doesn't already satisfy these requirements.
       - name: Ensure node v20.9.0 or greater
@@ -37,7 +37,7 @@ jobs:
 
       - name: Run Salesforce Code Analyzer
         id: run-code-analyzer
-        uses: forcedotcom/run-code-analyzer@v2
+        uses: forcedotcom/run-code-analyzer@v2.60
         with:
           run-arguments: --workspace . --view detail --output-file sfca_results.html --output-file sfca_results.json
           results-artifact-name: salesforce-code-analyzer-results
