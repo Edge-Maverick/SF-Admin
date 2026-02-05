@@ -9,7 +9,7 @@ jobs:
   salesforce-code-analyzer-workflow:
     permissions:
       contents: read
-      security-events: write # Added this back in case you want SARIF later
+      security-events: write 
       actions: read
       checks: write 
       
